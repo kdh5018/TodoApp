@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="187" id="BbU-65-dyD" customClass="TodoCell" customModule="TodoApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="187"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="BbU-65-dyD" id="om8-rs-zlk" customClass="TodoCell" customModule="TodoApp" customModuleProvider="target">
+                <rect key="frame" x="0.0" y="0.0" width="393" height="187"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="654-HM-ZFe">
+                        <rect key="frame" x="18" y="23.999999999999996" width="315" height="40.666666666666657"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="13" translatesAutoresizingMaskIntoConstraints="NO" id="aTT-VK-OY1">
+                        <rect key="frame" x="61" y="106.66666666666669" width="318" height="55"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3gn-aq-MjM">
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="3jH-uB-rPU"/>
+                                    <constraint firstAttribute="height" constant="32" id="FIs-vj-iJt"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ahd-Fq-uPB">
+                                <rect key="frame" x="0.0" y="44.999999999999986" width="67" height="10"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="10" id="Iuu-7V-xb1"/>
+                                    <constraint firstAttribute="width" constant="67" id="Qby-6a-Us7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                    </stackView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Llt-3s-uBs">
+                        <rect key="frame" x="28" y="124.66666666666669" width="20" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="p85-Nn-z6M"/>
+                        </constraints>
+                        <state key="normal" title="Button"/>
+                        <buttonConfiguration key="configuration" style="plain" image="checkbox_unchecked"/>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="aTT-VK-OY1" firstAttribute="top" secondItem="654-HM-ZFe" secondAttribute="bottom" constant="42" id="CbT-iD-nzi"/>
+                    <constraint firstAttribute="trailing" secondItem="aTT-VK-OY1" secondAttribute="trailing" constant="14" id="LAl-x1-KUd"/>
+                    <constraint firstItem="Llt-3s-uBs" firstAttribute="top" secondItem="654-HM-ZFe" secondAttribute="bottom" constant="60" id="RDz-1A-CVg"/>
+                    <constraint firstItem="aTT-VK-OY1" firstAttribute="leading" secondItem="om8-rs-zlk" secondAttribute="leading" constant="61" id="ULD-jq-Vpf"/>
+                    <constraint firstAttribute="trailing" secondItem="654-HM-ZFe" secondAttribute="trailing" constant="60" id="Z18-0A-TDf"/>
+                    <constraint firstItem="aTT-VK-OY1" firstAttribute="leading" secondItem="Llt-3s-uBs" secondAttribute="trailing" constant="13" id="Zw2-eF-dhg"/>
+                    <constraint firstItem="Llt-3s-uBs" firstAttribute="leading" secondItem="om8-rs-zlk" secondAttribute="leading" constant="28" id="dha-sb-Og8"/>
+                    <constraint firstItem="654-HM-ZFe" firstAttribute="leading" secondItem="om8-rs-zlk" secondAttribute="leading" constant="18" id="edh-fP-qIR"/>
+                    <constraint firstItem="654-HM-ZFe" firstAttribute="top" secondItem="om8-rs-zlk" secondAttribute="top" constant="24" id="uu4-rX-vuw"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="checkBoxBtn" destination="Llt-3s-uBs" id="8Zf-Q5-WmG"/>
+                <outlet property="todosDate" destination="654-HM-ZFe" id="Jcb-8h-9x1"/>
+                <outlet property="todosDetail" destination="3gn-aq-MjM" id="Fhr-NJ-ffj"/>
+                <outlet property="todosTime" destination="ahd-Fq-uPB" id="Lo1-ce-Iaz"/>
+            </connections>
+            <point key="canvasLocation" x="-28.244274809160306" y="-32.04225352112676"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="checkbox_unchecked" width="20" height="20"/>
+    </resources>
+</document>
