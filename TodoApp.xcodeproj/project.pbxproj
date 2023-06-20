@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		761E95EF2A41671E003D677E /* TodosVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95EE2A41671E003D677E /* TodosVM.swift */; };
+		761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95F42A417FFA003D677E /* URL+Ext.swift */; };
+		761E95F82A41831A003D677E /* MultipartForm in Frameworks */ = {isa = PBXBuildFile; productRef = 761E95F72A41831A003D677E /* MultipartForm */; };
 		76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4B2A319CA90067E130 /* AppDelegate.swift */; };
 		76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4D2A319CA90067E130 /* SceneDelegate.swift */; };
 		76739F502A319CA90067E130 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4F2A319CA90067E130 /* MainVC.swift */; };
@@ -24,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		761E95EE2A41671E003D677E /* TodosVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosVM.swift; sourceTree = "<group>"; };
+		761E95F42A417FFA003D677E /* URL+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ext.swift"; sourceTree = "<group>"; };
 		76739F482A319CA90067E130 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76739F4B2A319CA90067E130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		76739F4D2A319CA90067E130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -47,12 +52,51 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				761E95F82A41831A003D677E /* MultipartForm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		761E95F02A417F9F003D677E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				76739F612A31A9100067E130 /* PlusVC.swift */,
+				761E95EE2A41671E003D677E /* TodosVM.swift */,
+				76739F512A319CA90067E130 /* Main.storyboard */,
+				76739F4F2A319CA90067E130 /* MainVC.swift */,
+				76739F6B2A36E3E90067E130 /* TodoCell.xib */,
+				76739F6F2A36E6090067E130 /* TodoCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		761E95F12A417FC2003D677E /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				76739F632A36DA470067E130 /* TodoResponse.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		761E95F22A417FCF003D677E /* API */ = {
+			isa = PBXGroup;
+			children = (
+				76739F652A36DB070067E130 /* TodosAPI.swift */,
+				76739F672A36DD360067E130 /* TodosAPI+Closure.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		761E95F32A417FEC003D677E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				761E95F42A417FFA003D677E /* URL+Ext.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		76739F3F2A319CA90067E130 = {
 			isa = PBXGroup;
 			children = (
@@ -74,17 +118,13 @@
 			children = (
 				76739F4B2A319CA90067E130 /* AppDelegate.swift */,
 				76739F4D2A319CA90067E130 /* SceneDelegate.swift */,
+				761E95F32A417FEC003D677E /* Extensions */,
+				761E95F12A417FC2003D677E /* Data */,
+				761E95F02A417F9F003D677E /* View */,
+				761E95F22A417FCF003D677E /* API */,
 				76739F542A319CAA0067E130 /* Assets.xcassets */,
 				76739F562A319CAA0067E130 /* LaunchScreen.storyboard */,
 				76739F592A319CAA0067E130 /* Info.plist */,
-				76739F632A36DA470067E130 /* TodoResponse.swift */,
-				76739F652A36DB070067E130 /* TodosAPI.swift */,
-				76739F672A36DD360067E130 /* TodosAPI+Closure.swift */,
-				76739F612A31A9100067E130 /* PlusVC.swift */,
-				76739F512A319CA90067E130 /* Main.storyboard */,
-				76739F4F2A319CA90067E130 /* MainVC.swift */,
-				76739F6B2A36E3E90067E130 /* TodoCell.xib */,
-				76739F6F2A36E6090067E130 /* TodoCell.swift */,
 				76739F712A36FB000067E130 /* ReuseIdentifiable.swift */,
 				76739F732A36FB210067E130 /* Nibbed.swift */,
 			);
@@ -107,6 +147,9 @@
 			dependencies = (
 			);
 			name = TodoApp;
+			packageProductDependencies = (
+				761E95F72A41831A003D677E /* MultipartForm */,
+			);
 			productName = TodoApp;
 			productReference = 76739F482A319CA90067E130 /* TodoApp.app */;
 			productType = "com.apple.product-type.application";
@@ -135,6 +178,9 @@
 				Base,
 			);
 			mainGroup = 76739F3F2A319CA90067E130;
+			packageReferences = (
+				761E95F62A41831A003D677E /* XCRemoteSwiftPackageReference "MultipartForm" */,
+			);
 			productRefGroup = 76739F492A319CA90067E130 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -169,6 +215,8 @@
 				76739F642A36DA470067E130 /* TodoResponse.swift in Sources */,
 				76739F722A36FB000067E130 /* ReuseIdentifiable.swift in Sources */,
 				76739F742A36FB210067E130 /* Nibbed.swift in Sources */,
+				761E95EF2A41671E003D677E /* TodosVM.swift in Sources */,
+				761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */,
 				76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */,
 				76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */,
 				76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */,
@@ -396,6 +444,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		761E95F62A41831A003D677E /* XCRemoteSwiftPackageReference "MultipartForm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/davbeck/MultipartForm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		761E95F72A41831A003D677E /* MultipartForm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 761E95F62A41831A003D677E /* XCRemoteSwiftPackageReference "MultipartForm" */;
+			productName = MultipartForm;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 76739F402A319CA90067E130 /* Project object */;
 }

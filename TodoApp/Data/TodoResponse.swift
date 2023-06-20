@@ -14,6 +14,7 @@ struct TodosResponse: Codable {
     let message: String?
 }
 
+//MARK: - 제네릭 응답처리
 struct BaseListResponse<T: Codable>: Codable {
     let data: [T]?
     let meta: Meta?
@@ -53,5 +54,14 @@ struct Meta: Codable {
         case lastPage = "last_page"
         case perPage = "per_page"
         case to, total
+    }
+    
+    func hasNext() -> Bool {
+        guard let current = currentPage,
+              let last = lastPage else {
+            print("current, last 페이지 정보 없음")
+            return false
+        }
+        return current < last
     }
 }
