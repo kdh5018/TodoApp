@@ -22,6 +22,7 @@ enum TodosAPI {
         case badStatus(_ code: Int?) // 상태 코드 에러
         case notAllowedURL // 올바른 URL 형식 아님
         case badRequestError // 요청 에러
+        case jsonDecodingError // JSON 디코딩 에러
         
         var info: String {
             switch self {
@@ -32,6 +33,7 @@ enum TodosAPI {
             case .unknownError(let err):    return "알 수 없는 오류입니다: \(err)"
             case .notAllowedURL:            return "올바른 URL 형식이 아닙니다."
             case .badRequestError:          return "잘못된 요청입니다."
+            case .jsonDecodingError:        return "JSON 디코딩 에러입니다."
             }
             
         }
