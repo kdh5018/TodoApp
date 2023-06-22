@@ -12,25 +12,12 @@ class TodoCell: UITableViewCell {
     @IBOutlet weak var todosDate: UILabel!
     @IBOutlet weak var todosDetail: UILabel!
     @IBOutlet weak var todosTime: UILabel!
-    
-    @IBOutlet weak var checkBoxBtn: UIButton!
-    
+
     var cellData: Todo? = nil
-    
-    let checkedImage = UIImage(named: "checkBox_checked")
-    let uncheckedImage = UIImage(named: "checkBox_unchecked")
-    
-    var isChecked: Bool = false {
-        didSet {
-            // Update the checkbox image based on the state
-            let image = isChecked ? checkedImage : uncheckedImage
-        }
-    }
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        checkBoxBtn.addTarget(self, action: #selector(checkboxTapped), for: .touchUpInside)
     }
     
 
@@ -40,32 +27,34 @@ class TodoCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    
+    @IBAction func checkBoxBtnClicked(_ sender: UIButton) {
+    }
+    
+    
+    /// 셀데이터 적용
+    /// - Parameter cellData: <#cellData description#>
     func updateUI(_ cellData: Todo) {
-        guard let title: String = cellData.title else {
-            print("title 없음")
+        
+        guard let id = cellData.id,
+              let title = cellData.title,
+              var updated = cellData.updatedAt
+        else {
+            print("id, title 없음")
             return
         }
         
         self.cellData = cellData
         
-        self.todosDetail.text = title
+        #warning("날짜만 들어가게 수정")
+        self.todosDate.text = cellData.updatedAt
         
-    }
-
-    @objc func checkboxTapped() {
-        isChecked = !isChecked
-        if isChecked == true {
-            todosDetail.attributedText = todosDetail.text?.strikeThrough()
-        }
+        self.todosDetail.text = cellData.title
+        
+        #warning("시간만 들어가게 수정")
+        self.todosTime.text = cellData.updatedAt
+        
     }
     
 
-}
-
-extension String {
-    func strikeThrough() -> NSAttributedString {
-        let attributeString = NSMutableAttributedString(string: self)
-        attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: NSMakeRange(0, attributeString.length))
-        return attributeString
-    }
 }

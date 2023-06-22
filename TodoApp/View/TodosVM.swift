@@ -6,24 +6,10 @@
 //
 
 import Foundation
-import Combine
 
-class TodosVM: ObservableObject {
+class TodosVM {
     
-    init() {
-        TodosAPI.fetchTodos { [weak self] result in
-            
-            guard let self = self else { return }
-                    
-            switch result {
-            case .success(let todosResponse):
-                print("todosVM - todosResponse: \(todosResponse)")
-            case .failure(let failure):
-                print("todosVM - failure: \(failure)")
-                self.handleError(failure)
-            }
-        }
-    }
+    
     
     fileprivate func handleError(_ error: Error) {
         if error is TodosAPI.ApiError {

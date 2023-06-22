@@ -673,4 +673,91 @@ extension TodosAPI {
         
     }
     
+    
+    /// 선택된 할 일들 삭제 (클로저 기반 모두 삭제, 연쇄 처리)
+    /// - Parameters:
+    ///   - selectedTodoIds: 선택된 할 일 아이디들
+    ///   - completion: 실제 삭제가 완료된 아이디들
+    static func deleteSelectedTodos(selectedTodoIds: [Int], completion: @escaping ([Int]) -> Void) {
+        
+        // 동시에 처리하기 위해 디스패치그룹을 사용
+        let group = DispatchGroup()
+        
+        // 성공적으로 삭제가 이뤄진 데이터
+        var deletedTodoIds : [Int] = [Int]()
+        
+        selectedTodoIds.forEach { aTodoId in
+            // 디스패치 그룹에 넣음
+            group.enter()
+            self.deleteATodo(id: aTodoId, completion: { result in
+                switch result {
+                case .success(let response):
+                    // 삭제된 아이디를 삭제된 아이디 배열에 넣기
+                    if let todoId = response.data?.id {
+                        deletedTodoIds.append(todoId)
+                        print("inner deleteATodo - Success: \(todoId)")
+                    }
+                case .failure(let failure):
+                    print("inner deleteATodo - Failure: \(failure)")
+                }
+                group.leave()
+            })// 단일 삭제 API 호출
+            group.notify(queue: .main) {
+                print("모든 API 완료됨")
+                completion(deletedTodoIds)
+            }
+        }
+        
+    }
+    
+    /// 선택된 할 일들 가져오기
+    /// - Parameters:
+    ///   - selectedTodoIds: 선택된 할 일 아이디들
+    ///   - completion: 응답 결과
+    static func fetchedSelectedTodos(selectedTodoIds: [Int], completion: @escaping (Result<[Todo], ApiError>) -> Void) {
+        
+        // 동시에 처리하기 위해 디스패치그룹을 사용
+        let group = DispatchGroup()
+        
+        // 가져온 데이터
+        var fetchedTodos: [Todo] = [Todo]()
+        
+        // 에러가 난 것들
+        var apiErrors: [ApiError] = []
+        
+        // 응답 결과들
+        var apiResult: [Int : Result<BaseResponse<Todo>, ApiError>] = [:]
+        
+        selectedTodoIds.forEach { aTodoId in
+            // 디스패치 그룹에 넣음
+            group.enter()
+            self.fetchATodo(id: aTodoId, completion: { result in
+                switch result {
+                case .success(let response):
+                    // 가져온 할 일을 가져온 할 일 배열에 넣는다
+                    if let todo = response.data {
+                        fetchedTodos.append(todo)
+                        print("inner fetchATodo - Success: \(todo)")
+                    }
+                case .failure(let failure):
+                    apiErrors.append(failure)
+                    print("inner fetchATodo - Failure: \(failure)")
+                }
+                group.leave()
+            })// 단일 할일 조회 API
+            group.notify(queue: .main) {
+                print("모든 API 완료됨")
+                // 만약 에러가 있다면 에러 올려주기
+                if !apiErrors.isEmpty {
+                    if let firstError = apiErrors.first {
+                        completion(.failure(firstError))
+                        return
+                    }
+                }
+                completion(.success(fetchedTodos))
+            }
+        }
+        
+    }
+    
 }
