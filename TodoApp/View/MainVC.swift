@@ -26,6 +26,7 @@ class MainVC: UIViewController {
         self.myTableView.dataSource = self
         self.myTableView.delegate = self
         
+        // 서비스 로직
         TodosAPI.fetchTodos(page: 1, completion: { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -35,7 +36,6 @@ class MainVC: UIViewController {
                     DispatchQueue.main.async {
                         self.myTableView.reloadData()
                     }
-                    
                 }
             case .failure(let failure):
                 print("failure: \(failure)")
@@ -76,6 +76,29 @@ extension MainVC: UITableViewDataSource {
 }
 
 extension MainVC: UITableViewDelegate {
-
+    //MARK: - 테이블뷰셀 좌우 스와이프
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // 왼쪽
+        let edit = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
+            #warning("sender는 수정해야할 데이터")
+            self.performSegue(withIdentifier: "EditVC", sender: nil)
+            
+            success(true)
+        }
+        edit.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [edit])
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // 오른쪽
+        let delete = UIContextualAction(style: .normal, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
+            print("삭제 클릭 됨")
+            #warning("삭제버튼 클릭하면 해당하는 아이디 내용 삭제되어야 함")
+//            TodosAPI.deleteATodo(id: , completion: <#T##(Result<BaseResponse<Todo>, TodosAPI.ApiError>) -> Void#>)
+            success(true)
+        }
+        delete.backgroundColor = .systemRed
+        return UISwipeActionsConfiguration(actions: [delete])
+    }
 }
 
