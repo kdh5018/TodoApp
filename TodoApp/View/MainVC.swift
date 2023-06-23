@@ -19,12 +19,13 @@ class MainVC: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        self.myTableView.register(TodoCell.uinib, forCellReuseIdentifier: TodoCell.reuseIdentifier)
+        self.myTableView.register(TodoTableViewCell.uinib, forCellReuseIdentifier: TodoTableViewCell.reuseIdentifier)
         
         self.myTableView.rowHeight = UITableView.automaticDimension
         
         self.myTableView.dataSource = self
         self.myTableView.delegate = self
+        
         
         // 서비스 로직
         TodosAPI.fetchTodos(page: 1, completion: { [weak self] result in
@@ -44,6 +45,7 @@ class MainVC: UIViewController {
         
     }
 
+
 }
 
 extension MainVC: UITableViewDataSource {
@@ -57,11 +59,11 @@ extension MainVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.rowHeight
+        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoCell.reuseIdentifier, for: indexPath) as? TodoCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoTableViewCell.reuseIdentifier, for: indexPath) as? TodoTableViewCell else {
             return UITableViewCell()
         }
         
@@ -76,6 +78,12 @@ extension MainVC: UITableViewDataSource {
 }
 
 extension MainVC: UITableViewDelegate {
+    
+//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return UITableView.automaticDimension
+//    }
+    
+    
     //MARK: - 테이블뷰셀 좌우 스와이프
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 왼쪽
@@ -94,11 +102,22 @@ extension MainVC: UITableViewDelegate {
         let delete = UIContextualAction(style: .normal, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             print("삭제 클릭 됨")
             #warning("삭제버튼 클릭하면 해당하는 아이디 내용 삭제되어야 함")
-//            TodosAPI.deleteATodo(id: , completion: <#T##(Result<BaseResponse<Todo>, TodosAPI.ApiError>) -> Void#>)
+            
             success(true)
         }
         delete.backgroundColor = .systemRed
         return UISwipeActionsConfiguration(actions: [delete])
+    }
+    
+    //MARK: - 스크롤 바닥 감지
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let height = scrollView.frame.size.height
+        let contentYOffset = scrollView.contentOffset.y
+        let distanceFromBottom = scrollView.contentSize.height - contentYOffset
+
+        if distanceFromBottom  - 200 < height {
+            print("You reached end of the table")
+        }
     }
 }
 

@@ -10,7 +10,6 @@ import Foundation
 class TodosVM {
     
     
-    
     fileprivate func handleError(_ error: Error) {
         if error is TodosAPI.ApiError {
             let apiError = error as! TodosAPI.ApiError

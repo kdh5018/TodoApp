@@ -78,7 +78,7 @@
                 <outlet property="todosDetail" destination="3gn-aq-MjM" id="Fhr-NJ-ffj"/>
                 <outlet property="todosTime" destination="ahd-Fq-uPB" id="Lo1-ce-Iaz"/>
             </connections>
-            <point key="canvasLocation" x="-28.244274809160306" y="-35.563380281690144"/>
+            <point key="canvasLocation" x="-24" y="-38"/>
         </tableViewCell>
     </objects>
     <resources>

@@ -22,10 +22,10 @@
 		76739F642A36DA470067E130 /* TodoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F632A36DA470067E130 /* TodoResponse.swift */; };
 		76739F662A36DB070067E130 /* TodosAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F652A36DB070067E130 /* TodosAPI.swift */; };
 		76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F672A36DD360067E130 /* TodosAPI+Closure.swift */; };
-		76739F6C2A36E3E90067E130 /* TodoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 76739F6B2A36E3E90067E130 /* TodoCell.xib */; };
-		76739F702A36E6090067E130 /* TodoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F6F2A36E6090067E130 /* TodoCell.swift */; };
 		76739F722A36FB000067E130 /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F712A36FB000067E130 /* ReuseIdentifiable.swift */; };
 		76739F742A36FB210067E130 /* Nibbed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F732A36FB210067E130 /* Nibbed.swift */; };
+		768BF70E2A457A51005B5E7C /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 768BF70C2A457A51005B5E7C /* TodoTableViewCell.swift */; };
+		768BF70F2A457A51005B5E7C /* TodoTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,10 +45,10 @@
 		76739F632A36DA470067E130 /* TodoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoResponse.swift; sourceTree = "<group>"; };
 		76739F652A36DB070067E130 /* TodosAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosAPI.swift; sourceTree = "<group>"; };
 		76739F672A36DD360067E130 /* TodosAPI+Closure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodosAPI+Closure.swift"; sourceTree = "<group>"; };
-		76739F6B2A36E3E90067E130 /* TodoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TodoCell.xib; sourceTree = "<group>"; };
-		76739F6F2A36E6090067E130 /* TodoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCell.swift; sourceTree = "<group>"; };
 		76739F712A36FB000067E130 /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
 		76739F732A36FB210067E130 /* Nibbed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nibbed.swift; sourceTree = "<group>"; };
+		768BF70C2A457A51005B5E7C /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
+		768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TodoTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,8 +71,8 @@
 				761E95EE2A41671E003D677E /* TodosVM.swift */,
 				76739F512A319CA90067E130 /* Main.storyboard */,
 				76739F4F2A319CA90067E130 /* MainVC.swift */,
-				76739F6B2A36E3E90067E130 /* TodoCell.xib */,
-				76739F6F2A36E6090067E130 /* TodoCell.swift */,
+				768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */,
+				768BF70C2A457A51005B5E7C /* TodoTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -201,10 +201,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				768BF70F2A457A51005B5E7C /* TodoTableViewCell.xib in Resources */,
 				76739F582A319CAA0067E130 /* LaunchScreen.storyboard in Resources */,
 				76739F552A319CAA0067E130 /* Assets.xcassets in Resources */,
 				761E95FD2A4419A2003D677E /* Main.storyboard in Resources */,
-				76739F6C2A36E3E90067E130 /* TodoCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,9 +226,9 @@
 				761E95EF2A41671E003D677E /* TodosVM.swift in Sources */,
 				761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */,
 				76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */,
+				768BF70E2A457A51005B5E7C /* TodoTableViewCell.swift in Sources */,
 				76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */,
 				76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */,
-				76739F702A36E6090067E130 /* TodoCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
