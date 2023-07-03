@@ -10,6 +10,7 @@ import UIKit
 class PlusVC: UIViewController {
 
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -17,7 +18,7 @@ class PlusVC: UIViewController {
     }
     
 
-    @IBAction func delBtn(_ sender: UIButton) {
+    @IBAction func backBtn(_ sender: UIButton) {
         
         self.dismiss(animated: true)
     }

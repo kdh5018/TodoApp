@@ -116,7 +116,7 @@ extension MainVC: UITableViewDelegate {
         let distanceFromBottom = scrollView.contentSize.height - contentYOffset
 
         if distanceFromBottom  - 200 < height {
-            print("You reached end of the table")
+            print("바닥")
         }
     }
 }
