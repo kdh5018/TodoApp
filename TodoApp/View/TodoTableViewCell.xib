@@ -25,11 +25,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KIX-Wa-fhT">
+                                <rect key="frame" x="0.0" y="34" width="447" height="20.333333333333329"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="13" translatesAutoresizingMaskIntoConstraints="NO" id="QhL-wl-0lK">
-                                <rect key="frame" x="0.0" y="34" width="447" height="199"/>
+                                <rect key="frame" x="0.0" y="76.333333333333329" width="447" height="156.66666666666669"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5id-tN-mpS" userLabel="checkBox">
-                                        <rect key="frame" x="0.0" y="89.666666666666657" width="30" height="20"/>
+                                        <rect key="frame" x="0.0" y="68.333333333333329" width="30" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="7Qq-OW-GpW"/>
                                             <constraint firstAttribute="width" constant="30" id="8QW-8c-uR5"/>
@@ -38,7 +44,7 @@
                                         <buttonConfiguration key="configuration" style="plain" image="checkbox_unchecked"/>
                                     </button>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="13" translatesAutoresizingMaskIntoConstraints="NO" id="HZY-OA-J8r">
-                                        <rect key="frame" x="43" y="34.333333333333329" width="404" height="130.66666666666669"/>
+                                        <rect key="frame" x="43" y="13" width="404" height="130.66666666666666"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5A9-99-Mh3" userLabel="todosDetail">
                                                 <rect key="frame" x="0.0" y="0.0" width="404" height="107.66666666666667"/>
@@ -74,6 +80,7 @@
                 <outlet property="checkBoxButton" destination="5id-tN-mpS" id="gkC-hZ-ruV"/>
                 <outlet property="todosDate" destination="TR9-si-gwH" id="qpS-pB-UhS"/>
                 <outlet property="todosDetail" destination="5A9-99-Mh3" id="ZaA-0R-Ax3"/>
+                <outlet property="todosId" destination="KIX-Wa-fhT" id="Gjz-9m-90a"/>
                 <outlet property="todosTime" destination="xkF-87-F1G" id="Tpp-Vu-9VX"/>
             </connections>
             <point key="canvasLocation" x="37.404580152671755" y="-4.5774647887323949"/>

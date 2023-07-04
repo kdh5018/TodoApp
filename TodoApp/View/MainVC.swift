@@ -15,10 +15,35 @@ class MainVC: UIViewController {
     
     var todos: [Todo] = []
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
+    
+    // 클로저 선언과 동시에 호출(클로저 뒤에 괄호가 선언 동시에 호출하는 법)
+    lazy var bottomIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = UIColor.systemBlue
+        indicator.startAnimating()
+        indicator.frame = CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 44)
+        return indicator
+    }()
+    
+    lazy var refreshControl: UIRefreshControl = {
+        
+        let refreshControl = UIRefreshControl()
+        
+        refreshControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+        refreshControl.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
+        refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+        return refreshControl
+    }()
+    
+    var searchTermInputWorkItem: DispatchWorkItem? = nil
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
+
+        // 테이블뷰 설정
         self.myTableView.register(TodoTableViewCell.uinib, forCellReuseIdentifier: TodoTableViewCell.reuseIdentifier)
         
         self.myTableView.rowHeight = UITableView.automaticDimension
@@ -26,26 +51,93 @@ class MainVC: UIViewController {
         self.myTableView.dataSource = self
         self.myTableView.delegate = self
         
+        self.myTableView.tableFooterView = bottomIndicator
+        self.myTableView.refreshControl = refreshControl
         
-        // 서비스 로직
-        TodosAPI.fetchTodos(page: 1, completion: { [weak self] result in
+        // 서치바 설정
+        self.searchBar.searchTextField.addTarget(self, action: #selector(searchTermChanged(_:)), for: .editingChanged)
+        
+        
+        // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
+        self.todosVM.notifyTodosChanged = { [weak self] updateTodos in
             guard let self = self else { return }
-            switch result {
-            case .success(let response):
-                if let fetchedTodos: [Todo] = response.data {
-                    self.todos = fetchedTodos
-                    DispatchQueue.main.async {
-                        self.myTableView.reloadData()
-                    }
+            self.todos = updateTodos
+            DispatchQueue.main.async {
+                self.myTableView.reloadData()
+            }
+        }
+        
+        // 페이지 변경
+        self.todosVM.notifyCurrentPageChanged = { [weak self] currentPage in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                print("페이지: \(currentPage)")
+            }
+        }
+        
+        // 로딩중 여부
+        self.todosVM.notifyLoadingStateChanged = { [weak self] isLoading in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if isLoading {
+                    self.myTableView.tableFooterView = self.bottomIndicator
+                } else {
+                    self.myTableView.tableFooterView = nil
                 }
-            case .failure(let failure):
-                print("failure: \(failure)")
+            }
+        }
+        
+        // 당겨서 새로고침 완료
+        self.todosVM.notifyRefreshEnded = { [weak self]  in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
+        }
+        
+        
+    }// viewDidLoad
+
+
+}
+
+//MARK: - 액션들
+extension MainVC {
+    
+    /// 리프레시 처리
+    /// - Parameter sender:
+    @objc fileprivate func handleRefresh(_ sender: UIRefreshControl) {
+        // 뷰모델한테 시키기
+        self.todosVM.fetchRefresh()
+    }
+    
+    /// 검색어 입력
+    /// - Parameter sender:
+    @objc fileprivate func searchTermChanged(_ sender: UITextField) {
+        
+        // 검색어가 입력되면 기존 작업 취소
+        searchTermInputWorkItem?.cancel()
+        
+        let dispatchWorkItem = DispatchWorkItem(block: {
+            // 백그라운드 - 사용자 입력 userInteractive
+            DispatchQueue.global(qos: .userInteractive).async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let userInput = sender.text,
+                          let self = self else { return }
+                    
+                    print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
+                    #warning("검색 API 호출하기")
+                    // 뷰모델 검색어 갱신
+                    self.todosVM.searchTerm = userInput
+                }
             }
         })
         
+        // 기존 작업을 나중에 취소하기 위해 메모리 주소 일치 시켜줌
+        self.searchTermInputWorkItem = dispatchWorkItem
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: dispatchWorkItem)
     }
-
-
 }
 
 extension MainVC: UITableViewDataSource {
@@ -117,6 +209,7 @@ extension MainVC: UITableViewDelegate {
 
         if distanceFromBottom  - 200 < height {
             print("바닥")
+            self.todosVM.fetchMore()
         }
     }
 }

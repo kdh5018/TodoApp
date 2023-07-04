@@ -70,6 +70,7 @@
                     </view>
                     <connections>
                         <outlet property="myTableView" destination="3TV-yI-UMa" id="iTb-tg-8XC"/>
+                        <outlet property="searchBar" destination="W91-WX-cOl" id="beV-1X-9Ds"/>
                         <segue destination="Kuz-Ym-izh" kind="show" identifier="EditVC" id="8kf-dA-Ama"/>
                     </connections>
                 </viewController>

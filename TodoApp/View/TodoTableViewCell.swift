@@ -13,6 +13,9 @@ class TodoTableViewCell: UITableViewCell {
     @IBOutlet weak var todosDetail: UILabel!
     @IBOutlet weak var todosTime: UILabel!
     
+    @IBOutlet weak var todosId: UILabel!
+    
+    
     @IBOutlet weak var checkBoxButton: UIButton!
     
     var isChecked: Bool = false
@@ -22,7 +25,6 @@ class TodoTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         checkBoxButton.addTarget(self, action: #selector(checkBoxToggled), for: .touchUpInside)
     }
@@ -41,6 +43,7 @@ class TodoTableViewCell: UITableViewCell {
             checkBoxButton.setImage(image, for: .normal)
             todosDetail.attributedText = todosDetail.text?.strikeThrough()
             print("체크")
+            #warning("체크가 되면 할일 상태도 완료가 되어야 함")
             
         } else if isChecked == true {
             isChecked = false
@@ -48,6 +51,7 @@ class TodoTableViewCell: UITableViewCell {
             checkBoxButton.setImage(image, for: .normal)
             todosDetail.attributedText = todosDetail.text?.removeStrikeThrough()
             print("체크해제")
+            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
         }
     }
     
@@ -56,9 +60,9 @@ class TodoTableViewCell: UITableViewCell {
     /// - Parameter cellData: 
     func updateUI(_ cellData: Todo) {
         
-        guard let id = cellData.id,
-              let title = cellData.title,
-              var updated = cellData.updatedAt
+        guard let id: Int = cellData.id,
+              let title: String = cellData.title,
+              var updated: String = cellData.updatedAt
         else {
             print("id, title 없음")
             return
@@ -66,13 +70,16 @@ class TodoTableViewCell: UITableViewCell {
         
         self.cellData = cellData
         
-        #warning("날짜만 들어가게 수정")
-        self.todosDate?.text = cellData.updatedAt
         
-        self.todosDetail?.text = cellData.title
+        #warning("날짜만 들어가게 수정")
+        self.todosDate?.text = updated
+        
+        self.todosId?.text = "\(id)"
+        
+        self.todosDetail?.text = title
         
         #warning("시간만 들어가게 수정")
-        self.todosTime?.text = cellData.updatedAt
+        self.todosTime?.text = updated
     }
     
 }
