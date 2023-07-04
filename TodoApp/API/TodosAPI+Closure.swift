@@ -169,7 +169,7 @@ extension TodosAPI {
         
         // URLComponents : URL 구성하는 구조로써 정의하면 보다 편하게 URL 설정을 할 수 있음
         // URL+Ext로 익스텐션(헬퍼 메소드)을 설정해서 보다 편하게 URL 설정
-        let requestUrl = URL(baseUrl: baseURL + "/todos/search", queryItems: ["quary": searchTerm, "page": "\(page)"])
+        let requestUrl = URL(baseUrl: baseURL + "/todos/search", queryItems: ["query": searchTerm, "page": "\(page)"])
         
 //        var urlComponents = URLComponents(string: baseURL + "/todos/search")
 //        urlComponents?.queryItems = [

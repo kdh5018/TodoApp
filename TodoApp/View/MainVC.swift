@@ -37,6 +37,23 @@ class MainVC: UIViewController {
         return refreshControl
     }()
     
+    // 검색 결과를 찾지 못했다
+    lazy var searchDataNotFoundView: UIView = {
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 300))
+        
+        let label = UILabel()
+        label.text = "검색 결과를 찾을 수 없습니다🗑️"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        return view
+    }()
+    
     var searchTermInputWorkItem: DispatchWorkItem? = nil
 
     
@@ -95,6 +112,14 @@ class MainVC: UIViewController {
             }
         }
         
+        // 검색결과 못찾음
+        self.todosVM.notifySearchDataNotFound = { [weak self] notFound in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
+            }
+        }
+        
         
     }// viewDidLoad
 
@@ -126,7 +151,7 @@ extension MainVC {
                           let self = self else { return }
                     
                     print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
-                    #warning("검색 API 호출하기")
+                    self.todosVM.todos = []
                     // 뷰모델 검색어 갱신
                     self.todosVM.searchTerm = userInput
                 }

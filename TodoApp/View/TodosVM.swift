@@ -19,7 +19,11 @@ class TodosVM {
     // 검색어
     var searchTerm: String = "" {
         didSet {
-            self.searchTodos(searchTerm: searchTerm)
+            if searchTerm.count > 0 {
+                self.searchTodos(searchTerm: searchTerm)
+            } else {
+                self.fetchTodos()
+            }
         }
     }
     
@@ -34,6 +38,9 @@ class TodosVM {
             self.notifyLoadingStateChanged?(isLoading)
         }
     }
+    
+    // 검색결과 없음 여부 이벤트
+    var notifySearchDataNotFound: ((_ noContent: Bool) -> Void)? = nil
     
     // 리프레시 완료 이벤트
     var notifyRefreshEnded: (() -> Void)? = nil
@@ -67,6 +74,8 @@ class TodosVM {
             return
         }
         
+        self.notifySearchDataNotFound?(false)
+        
         self.todos = []
         
         isLoading = true
@@ -91,6 +100,7 @@ class TodosVM {
                     }
                 case .failure(let failure):
                     print("failure: \(failure)")
+                    self.handleError(failure)
                 }
                 self.notifyRefreshEnded?()
                 self.isLoading = false
@@ -146,20 +156,26 @@ class TodosVM {
     
     
     fileprivate func handleError(_ error: Error) {
-        if error is TodosAPI.ApiError {
-            let apiError = error as! TodosAPI.ApiError
-            
-            print("handleError: Error: \(apiError.info)")
-            
-            switch apiError {
-            case .noContentsError:
-                print("컨텐츠 없음")
-            case .unauthorizedError:
-                print("인증 안됨")
-            default:
-                print("default")
-            }
+        
+        guard let apiError = error as? TodosAPI.ApiError else {
+            print("모르는 에러입니다")
+            return
         }
-    }
+        
+        print("handleError: Error: \(apiError.info)")
+        
+        switch apiError {
+        case .noContentsError:
+            print("컨텐츠 없음")
+            self.notifySearchDataNotFound?(true)
+        case .unauthorizedError:
+            print("인증 안됨")
+        case .decodingError:
+            print("디코딩 에러")
+        default:
+            print("default")
+            
+        }
+    }// handleError
     
 }
