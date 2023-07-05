@@ -137,6 +137,9 @@
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="I1m-Kr-Vat">
                                 <rect key="frame" x="312" y="347" width="51" height="31"/>
+                                <connections>
+                                    <action selector="switchIsDone:" destination="cjg-x3-5PF" eventType="valueChanged" id="tgT-Op-E6D"/>
+                                </connections>
                             </switch>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lT-bp-fnF" customClass="RoundBtn" customModule="TodoApp" customModuleProvider="target">
                                 <rect key="frame" x="30" y="433.66666666666669" width="334" height="46"/>
@@ -195,6 +198,11 @@ tomorrow</string>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="eqz-5N-Qvb"/>
+                    <connections>
+                        <outlet property="isDoneSwitch" destination="I1m-Kr-Vat" id="2nD-dV-xYI"/>
+                        <outlet property="plusTodos" destination="TRv-Rj-2qS" id="L3j-aC-Y7a"/>
+                        <outlet property="plusTodosButton" destination="6lT-bp-fnF" id="oEo-AI-Unk"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j4U-Yu-JA1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

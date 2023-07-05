@@ -54,6 +54,23 @@ class MainVC: UIViewController {
         return view
     }()
     
+    // 더 이상 가져올 데이터가 없음
+    lazy var bottomNoMoreDataView: UIView = {
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 60))
+        
+        let label = UILabel()
+        label.text = "더 이상 가져올 데이터가 없습니다👻"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        return view
+    }()
+    
     var searchTermInputWorkItem: DispatchWorkItem? = nil
 
     
@@ -120,8 +137,32 @@ class MainVC: UIViewController {
             }
         }
         
+        // 다음페이지 존재 여부
+        self.todosVM.notifyHasNextPage = { [weak self] hasNext in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
+            }
+        }
+        
+        // 할 일 추가 완료 이벤트
+        self.todosVM.notifyTodoAdded = { [weak self] in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                self.myTableView?.reloadData()
+            }
+        }
+        
         
     }// viewDidLoad
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        if let destinationVC = segue.destination as? PlusVC {
+            destinationVC.todosVM = self.todosVM
+        }
+    }
 
 
 }
@@ -216,13 +257,13 @@ extension MainVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 오른쪽
-        let delete = UIContextualAction(style: .normal, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
+        let delete = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             print("삭제 클릭 됨")
             #warning("삭제버튼 클릭하면 해당하는 아이디 내용 삭제되어야 함")
-            
+
             success(true)
         }
-        delete.backgroundColor = .systemRed
+//        delete.backgroundColor = .systemRed
         return UISwipeActionsConfiguration(actions: [delete])
     }
     
@@ -233,9 +274,27 @@ extension MainVC: UITableViewDelegate {
         let distanceFromBottom = scrollView.contentSize.height - contentYOffset
 
         if distanceFromBottom  - 200 < height {
-            print("바닥")
             self.todosVM.fetchMore()
         }
     }
 }
 
+//MARK: - 삭제 얼럿
+extension MainVC {
+    
+    @objc func showDeleteAlert(_ id: Int) {
+        
+        let alert = UIAlertController(title: "할일 삭제", message: "\(id) 할일을 삭제하겠습니까?", preferredStyle: .alert)
+        
+        let submitAction = UIAlertAction(title: "확인", style: .default, handler: { _ in
+            self.todosVM.deleteATodo(id: id)
+        })
+        
+        let closeAction = UIAlertAction(title: "닫기", style: .cancel)
+        
+        alert.addAction(submitAction)
+        alert.addAction(closeAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+}

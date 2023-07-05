@@ -15,12 +15,14 @@ class TodoTableViewCell: UITableViewCell {
     
     @IBOutlet weak var todosId: UILabel!
     
-    
     @IBOutlet weak var checkBoxButton: UIButton!
     
     var isChecked: Bool = false
     
     var cellData: Todo? = nil
+    
+    // 삭제 액션
+    var onDeleteActionEvent: ((Int) -> Void)? = nil
     
     
     override func awakeFromNib() {
@@ -34,23 +36,33 @@ class TodoTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func isCheckedFunc() {
+        let image = UIImage(named: "checkbox_checked")
+        checkBoxButton.setImage(image, for: .normal)
+        todosDetail.attributedText = todosDetail.text?.strikeThrough()
+        print("체크")
+    }
+    
+    func isUnCheckedFunc() {
+        let image = UIImage(named: "checkbox_unchecked")
+        checkBoxButton.setImage(image, for: .normal)
+        todosDetail.attributedText = todosDetail.text?.removeStrikeThrough()
+        print("체크해제")
+    }
 
     
     @objc func checkBoxToggled() {
         if isChecked == false {
             isChecked = true
-            let image = UIImage(named: "checkbox_checked")
-            checkBoxButton.setImage(image, for: .normal)
-            todosDetail.attributedText = todosDetail.text?.strikeThrough()
-            print("체크")
+            isCheckedFunc()
             #warning("체크가 되면 할일 상태도 완료가 되어야 함")
+            #warning("체크가 되면 api에서도 완료로 변경이 되어야 함")
             
         } else if isChecked == true {
             isChecked = false
-            let image = UIImage(named: "checkbox_unchecked")
-            checkBoxButton.setImage(image, for: .normal)
-            todosDetail.attributedText = todosDetail.text?.removeStrikeThrough()
-            print("체크해제")
+            isUnCheckedFunc()
+            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
             #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
         }
     }
@@ -62,7 +74,7 @@ class TodoTableViewCell: UITableViewCell {
         
         guard let id: Int = cellData.id,
               let title: String = cellData.title,
-              var updated: String = cellData.updatedAt
+              let updated: String = cellData.updatedAt
         else {
             print("id, title 없음")
             return

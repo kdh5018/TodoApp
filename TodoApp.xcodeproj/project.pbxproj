@@ -13,6 +13,7 @@
 		761E95FA2A42D3B7003D677E /* URLRequest+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95F92A42D3B7003D677E /* URLRequest+Ext.swift */; };
 		761E95FC2A440E67003D677E /* EditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95FB2A440E67003D677E /* EditVC.swift */; };
 		761E95FD2A4419A2003D677E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76739F512A319CA90067E130 /* Main.storyboard */; };
+		76633F9E2A55369B0076B7CD /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76633F9D2A55369B0076B7CD /* ErrorResponse.swift */; };
 		76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4B2A319CA90067E130 /* AppDelegate.swift */; };
 		76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4D2A319CA90067E130 /* SceneDelegate.swift */; };
 		76739F502A319CA90067E130 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4F2A319CA90067E130 /* MainVC.swift */; };
@@ -33,6 +34,7 @@
 		761E95F42A417FFA003D677E /* URL+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ext.swift"; sourceTree = "<group>"; };
 		761E95F92A42D3B7003D677E /* URLRequest+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Ext.swift"; sourceTree = "<group>"; };
 		761E95FB2A440E67003D677E /* EditVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditVC.swift; sourceTree = "<group>"; };
+		76633F9D2A55369B0076B7CD /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		76739F482A319CA90067E130 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76739F4B2A319CA90067E130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		76739F4D2A319CA90067E130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				76739F632A36DA470067E130 /* TodoResponse.swift */,
+				76633F9D2A55369B0076B7CD /* ErrorResponse.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76633F9E2A55369B0076B7CD /* ErrorResponse.swift in Sources */,
 				76739F502A319CA90067E130 /* MainVC.swift in Sources */,
 				76739F622A31A9100067E130 /* PlusVC.swift in Sources */,
 				76739F662A36DB070067E130 /* TodosAPI.swift in Sources */,
