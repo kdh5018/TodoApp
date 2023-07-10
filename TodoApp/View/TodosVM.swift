@@ -53,6 +53,18 @@ class TodosVM {
         }
     }
     
+//    var isCompleting: Bool = false {
+//        didSet {
+//            self.notifyTodosCompleted?(isCompleting)
+//        }
+//    }
+    
+//    // 할일 완료 여부
+//    var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
+    
+    // 삭제 이벤트
+    var notifyDeleted: ((Int) -> Void)? = nil
+    
     // 에러 발생 이벤트
     var notifyErrorOccured: ((_ errMsg: String) -> Void)? = nil
     
@@ -230,7 +242,7 @@ class TodosVM {
     
     /// 할 일 가져오기
     /// - Parameter page: 페이지
-    func fetchTodos(page: Int = 1) {
+    func fetchTodos(page: Int = 1, isDone: Bool = false) {
         
         if isLoading {
             print("로딩중입니다")

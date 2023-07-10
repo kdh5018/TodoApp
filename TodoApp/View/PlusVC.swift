@@ -11,7 +11,7 @@ class PlusVC: UIViewController {
     
     var mainVC =  MainVC()
     
-    var todoTableViewCell = TodoTableViewCell()
+    var todoTableViewCell: TodoTableViewCell? = nil
     
     var todosVM: TodosVM? = nil
     
@@ -26,7 +26,7 @@ class PlusVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.plusTodosButton.addTarget(self, action: #selector(finishInputTodos), for: .touchUpInside)
+        self.plusTodosButton.addTarget(self, action: #selector(plusTodosButtonTapped), for: .touchUpInside)
         
         self.isDoneSwitch.setOn(false, animated: true)
         
@@ -38,49 +38,43 @@ class PlusVC: UIViewController {
                 self.showErrorAlert(errMsg: errMsg)
             }
         }
-        
     }
-    
-
     
     @IBAction func switchIsDone(_ sender: UISwitch) {
         if isDoneSwitch.isOn {
             #warning("체크박스 체크, 취소선 그어져야 함")
 //            let image = UIImage(named: "checkbox_checked")
-//            self.todoTableViewCell.checkBoxButton?.setImage(image, for: .normal)
-//            self.todoTableViewCell.todosDetail?.attributedText = todoTableViewCell.todosDetail.text?.strikeThrough()
+//            self.todoTableViewCell?.checkBoxButton?.setImage(image, for: .normal)
+//            self.todoTableViewCell?.todosDetail?.attributedText = todoTableViewCell?.todosDetail.text?.strikeThrough()
             
-//            self.todoTableViewCell.isCheckedFunc()
+            self.todoTableViewCell?.isCheckedFunc()
             
             #warning("api 연동 시 완료로 체크되어야 함")
             
         } else {
             #warning("체크박스 체크 X, 취소선 없어야 함")
 //            let image = UIImage(named: "checkbox_unchecked")
-//            self.todoTableViewCell.checkBoxButton?.setImage(image, for: .normal)
-//            self.todoTableViewCell.todosDetail?.attributedText = todoTableViewCell.todosDetail.text?.removeStrikeThrough()
+//            self.todoTableViewCell?.checkBoxButton?.setImage(image, for: .normal)
+//            self.todoTableViewCell?.todosDetail?.attributedText = todoTableViewCell?.todosDetail.text?.removeStrikeThrough()
             
-//            self.todoTableViewCell.isUnCheckedFunc()
+            self.todoTableViewCell?.isUnCheckedFunc()
             
             #warning("api 연동 시 미완료로 체크되어야 함")
             
         }
     }
-    
-    
 
     @IBAction func backBtn(_ sender: UIButton) {
         
         self.dismiss(animated: true)
     }
     
-    
 }
 
 extension PlusVC {
     
     //MARK: - 완료 버튼 셀렉터
-    @objc func finishInputTodos() {
+    @objc func plusTodosButtonTapped() {
         let title = plusTodos.text ?? ""
         
         self.todosVM?.addATodo(title: title,

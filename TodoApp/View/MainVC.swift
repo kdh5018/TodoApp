@@ -12,6 +12,7 @@ class MainVC: UIViewController {
     @IBOutlet weak var myTableView: UITableView!
 
     var todosVM: TodosVM = TodosVM()
+    var todoTableViewCell: TodoTableViewCell = TodoTableViewCell()
     
     var todos: [Todo] = []
     
@@ -161,10 +162,9 @@ class MainVC: UIViewController {
         super.prepare(for: segue, sender: sender)
         if let destinationVC = segue.destination as? PlusVC {
             destinationVC.todosVM = self.todosVM
+            destinationVC.todoTableViewCell = self.todoTableViewCell
         }
     }
-
-
 }
 
 //MARK: - 액션들
@@ -209,7 +209,7 @@ extension MainVC {
 extension MainVC: UITableViewDataSource {
     
 //    func numberOfSections(in tableView: UITableView) -> Int {
-//
+//        return 10
 //    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -260,10 +260,10 @@ extension MainVC: UITableViewDelegate {
         let delete = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             print("삭제 클릭 됨")
             #warning("삭제버튼 클릭하면 해당하는 아이디 내용 삭제되어야 함")
-
+            
             success(true)
         }
-//        delete.backgroundColor = .systemRed
+        delete.backgroundColor = .systemRed
         return UISwipeActionsConfiguration(actions: [delete])
     }
     
