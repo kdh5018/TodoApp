@@ -63,7 +63,7 @@ class TodosVM {
 //    var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
     
     // 삭제 이벤트
-    var notifyDeleted: ((Int) -> Void)? = nil
+    var notifyDeleted: (() -> Void)? = nil
     
     // 에러 발생 이벤트
     var notifyErrorOccured: ((_ errMsg: String) -> Void)? = nil
@@ -115,6 +115,7 @@ class TodosVM {
                     
                     // 삭제된 아이템 찾아서 그 데이터만 현재 리스트에서 빼기
                     self.todos = self.todos.filter{ $0.id ?? 0 != deletedTodoId }
+                    self.notifyDeleted?()
         
                 }
             case .failure(let failure):

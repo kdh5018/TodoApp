@@ -155,7 +155,6 @@ class MainVC: UIViewController {
             }
         }
         
-        
     }// viewDidLoad
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -247,7 +246,10 @@ extension MainVC: UITableViewDelegate {
         // 왼쪽
         let edit = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             #warning("sender는 수정해야할 데이터")
-            self.performSegue(withIdentifier: "EditVC", sender: nil)
+            let itemToEdited = self.todos[indexPath.row]
+            let editedId = itemToEdited.id!
+            
+            self.performSegue(withIdentifier: "EditVC", sender: editedId)
             
             success(true)
         }
@@ -259,7 +261,15 @@ extension MainVC: UITableViewDelegate {
         // 오른쪽
         let delete = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             print("삭제 클릭 됨")
-            #warning("삭제버튼 클릭하면 해당하는 아이디 내용 삭제되어야 함")
+            
+            // 삭제할 아이템을 찾기 위한 indexPath의 값들 찾기
+            let itemToDelete = self.todos[indexPath.row]
+            print("itemToDelete: \(itemToDelete)")
+            
+            // 찾은 값들 중 내가 필요한 id만 가져오기
+            let id = itemToDelete.id!
+
+            self.todosVM.deleteATodo(id: id)
             
             success(true)
         }
