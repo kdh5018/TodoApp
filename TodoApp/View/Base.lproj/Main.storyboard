@@ -98,16 +98,10 @@
                                 </textAttributes>
                                 <items>
                                     <navigationItem title="할일 추가" largeTitleDisplayMode="always" id="64a-5n-Etd">
-                                        <barButtonItem key="leftBarButtonItem" style="plain" id="wMX-FQ-RjD">
-                                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="UKU-be-zYJ">
-                                                <rect key="frame" x="16" y="10.666666666666664" width="90.666666666666671" height="35"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="chevron.left" catalog="system" title="닫기"/>
-                                                <connections>
-                                                    <action selector="backBtn:" destination="cjg-x3-5PF" eventType="touchUpInside" id="bon-e1-wfH"/>
-                                                </connections>
-                                            </button>
+                                        <barButtonItem key="leftBarButtonItem" title="닫기" style="plain" id="wMX-FQ-RjD">
+                                            <connections>
+                                                <action selector="backBtn:" destination="cjg-x3-5PF" id="rbd-IO-VXO"/>
+                                            </connections>
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
@@ -199,6 +193,7 @@ tomorrow</string>
                     </view>
                     <navigationItem key="navigationItem" id="eqz-5N-Qvb"/>
                     <connections>
+                        <outlet property="closeButton" destination="wMX-FQ-RjD" id="anW-Zd-W9S"/>
                         <outlet property="isDoneSwitch" destination="I1m-Kr-Vat" id="2nD-dV-xYI"/>
                         <outlet property="plusTodos" destination="TRv-Rj-2qS" id="L3j-aC-Y7a"/>
                         <outlet property="plusTodosButton" destination="6lT-bp-fnF" id="oEo-AI-Unk"/>
@@ -228,16 +223,10 @@ tomorrow</string>
                                 </textAttributes>
                                 <items>
                                     <navigationItem title="할일 수정" largeTitleDisplayMode="always" id="4gb-hB-auD">
-                                        <barButtonItem key="leftBarButtonItem" style="plain" id="O13-Sy-7tV">
-                                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="2RZ-vF-BaF">
-                                                <rect key="frame" x="16" y="10.666666666666664" width="90.666666666666671" height="35"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="chevron.left" catalog="system" title="닫기"/>
-                                                <connections>
-                                                    <action selector="backBtn:" destination="Kuz-Ym-izh" eventType="touchUpInside" id="KAJ-Py-rVU"/>
-                                                </connections>
-                                            </button>
+                                        <barButtonItem key="leftBarButtonItem" title="닫기" style="plain" id="O13-Sy-7tV">
+                                            <connections>
+                                                <action selector="backBtn:" destination="Kuz-Ym-izh" id="clT-Yu-yob"/>
+                                            </connections>
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
@@ -325,6 +314,11 @@ tomorrow</string>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="sUf-LD-iYT"/>
+                    <connections>
+                        <outlet property="editButton" destination="uD8-JS-rbc" id="QDN-Ax-NSv"/>
+                        <outlet property="editTextField" destination="wpM-rs-D8V" id="tnN-8P-Txu"/>
+                        <outlet property="isDoneSwitch" destination="x4e-oL-JPA" id="0yA-3G-blb"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3YE-Zp-Lqp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -332,7 +326,6 @@ tomorrow</string>
         </scene>
     </scenes>
     <resources>
-        <image name="chevron.left" catalog="system" width="97" height="128"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

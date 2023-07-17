@@ -53,14 +53,14 @@ class TodosVM {
         }
     }
     
-//    var isCompleting: Bool = false {
-//        didSet {
-//            self.notifyTodosCompleted?(isCompleting)
-//        }
-//    }
+    var isCompleting: Bool = false {
+        didSet {
+            self.notifyTodosCompleted?(isCompleting)
+        }
+    }
     
-//    // 할일 완료 여부
-//    var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
+    // 할일 완료 여부
+    var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
     
     // 삭제 이벤트
     var notifyDeleted: (() -> Void)? = nil
@@ -92,6 +92,46 @@ class TodosVM {
     init() {
         fetchTodos()
     }// init
+    
+    
+    /// 할일 수정
+    /// - Parameters:
+    ///   - id: 수정할 데이터 아이디
+    ///   - editedTitle: 수정할 내용
+    func editATodo(_ id: Int, _ editedTitle: String, editedCompletion: @escaping () -> Void) {
+        
+        print(#fileID, #function, #line, "- editedTitle: \(editedTitle)")
+        
+        if isLoading {
+            print("로딩중입니다")
+            return
+        }
+        
+        self.isLoading = true
+        
+        TodosAPI.editATodo(id: id,
+                           title: editedTitle,
+                           completion: { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                self.isLoading = false
+                if let editedATodo: Todo = response.data,
+                   let editedTodoId: Int = editedATodo.id,
+                   let editedIndex = self.todos.firstIndex(where: { $0.id ?? 0 == editedTodoId }) {
+                    
+                    // 지금 수정한 녀석의 아이디를 가지고 있는 인덱스 찾기
+                    // 그 녀석을 바꾸기
+                    self.todos[editedIndex] = editedATodo
+                    editedCompletion()
+                            
+                }
+            case .failure(let failure):
+                self.isLoading = false
+                self.handleError(failure)
+            }
+        })
+    }
     
     
     /// 할일 삭제
@@ -129,7 +169,9 @@ class TodosVM {
     /// 할 일 추가
     /// - Parameters:
     ///   - title: 할일
-    func addATodo(title: String, addedCompletion: @escaping () -> Void) {
+    func addATodo(title: String,
+//                  isDone: Bool,
+                  addedCompletion: @escaping () -> Void) {
         
         if isLoading {
             print("로딩중입니다.")
@@ -138,7 +180,9 @@ class TodosVM {
         
         self.isLoading = true
 
-        TodosAPI.addATodoAndFetchTodos(title: title, completion: { [weak self] result in
+        TodosAPI.addATodoAndFetchTodos(title: title,
+//                                       isDone: isDone,
+                                       completion: { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let response):
@@ -150,6 +194,7 @@ class TodosVM {
                     self.pageInfo = pageInfo
                     self.notifyTodoAdded?()
                     addedCompletion()
+//                    self.notifyTodosCompleted?(isDone)
                 }
             case .failure(let failure):
                 print("failure: \(failure)")

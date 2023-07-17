@@ -22,9 +22,13 @@ class PlusVC: UIViewController {
     
     @IBOutlet weak var isDoneSwitch: UISwitch!
     
+    @IBOutlet weak var closeButton: UIButton!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        
 
         self.plusTodosButton.addTarget(self, action: #selector(plusTodosButtonTapped), for: .touchUpInside)
         
@@ -46,10 +50,12 @@ class PlusVC: UIViewController {
 //            let image = UIImage(named: "checkbox_checked")
 //            self.todoTableViewCell?.checkBoxButton?.setImage(image, for: .normal)
 //            self.todoTableViewCell?.todosDetail?.attributedText = todoTableViewCell?.todosDetail.text?.strikeThrough()
-            
+
             self.todoTableViewCell?.isCheckedFunc()
             
             #warning("api 연동 시 완료로 체크되어야 함")
+            
+            
             
         } else {
             #warning("체크박스 체크 X, 취소선 없어야 함")
@@ -76,10 +82,20 @@ extension PlusVC {
     //MARK: - 완료 버튼 셀렉터
     @objc func plusTodosButtonTapped() {
         let title = plusTodos.text ?? ""
+    
+//        var isDone = false
+//
+//        if isDoneSwitch.isOn {
+//            isDone = true
+//        } else {
+//            isDone = false
+//        }
         
         self.todosVM?.addATodo(title: title,
+//                               isDone: isDone,
                                addedCompletion: {
             DispatchQueue.main.async {
+                
                 self.dismiss(animated: true)
             }
         })

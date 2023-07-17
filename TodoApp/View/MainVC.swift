@@ -163,6 +163,11 @@ class MainVC: UIViewController {
             destinationVC.todosVM = self.todosVM
             destinationVC.todoTableViewCell = self.todoTableViewCell
         }
+        if let destinationVC = segue.destination as? EditVC, let editedTodo = sender as? Todo {
+            destinationVC.todosVM = self.todosVM
+            destinationVC.todoTableViewCell = self.todoTableViewCell
+            destinationVC.selectedTodo = editedTodo
+        }
     }
 }
 
@@ -247,9 +252,8 @@ extension MainVC: UITableViewDelegate {
         let edit = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             #warning("sender는 수정해야할 데이터")
             let itemToEdited = self.todos[indexPath.row]
-            let editedId = itemToEdited.id!
             
-            self.performSegue(withIdentifier: "EditVC", sender: editedId)
+            self.performSegue(withIdentifier: "EditVC", sender: itemToEdited)
             
             success(true)
         }

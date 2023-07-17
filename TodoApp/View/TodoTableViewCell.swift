@@ -22,7 +22,7 @@ class TodoTableViewCell: UITableViewCell {
     var cellData: Todo? = nil
     
     // 삭제 액션
-    var onDeleteActionEvent: ((Int) -> Void)? = nil
+//    var onDeleteActionEvent: ((Int) -> Void)? = nil
     
     // 수정 액션
 //    var onEditActionEvent: ((_ id: Int, _ title: String) -> Void)? = nil
@@ -64,9 +64,7 @@ class TodoTableViewCell: UITableViewCell {
             isCheckedFunc()
             #warning("체크가 되면 할일 상태도 완료가 되어야 함")
             #warning("체크가 되면 api에서도 완료로 변경이 되어야 함")
-            
-            
-            
+
         } else if isChecked == true {
             isChecked = false
             isUnCheckedFunc()
