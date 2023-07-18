@@ -16,6 +16,8 @@ class MainVC: UIViewController {
     
     var todos: [Todo] = []
     
+    
+    
     @IBOutlet weak var searchBar: UISearchBar!
     
     
@@ -78,6 +80,8 @@ class MainVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+//        self.performSegue(withIdentifier: "PlusVC", sender: nil)
+        
         // 테이블뷰 설정
         self.myTableView.register(TodoTableViewCell.uinib, forCellReuseIdentifier: TodoTableViewCell.reuseIdentifier)
         
@@ -157,11 +161,14 @@ class MainVC: UIViewController {
         
     }// viewDidLoad
     
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         if let destinationVC = segue.destination as? PlusVC {
             destinationVC.todosVM = self.todosVM
             destinationVC.todoTableViewCell = self.todoTableViewCell
+            
         }
         if let destinationVC = segue.destination as? EditVC, let editedTodo = sender as? Todo {
             destinationVC.todosVM = self.todosVM
@@ -208,6 +215,15 @@ extension MainVC {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: dispatchWorkItem)
     }
+    
+    // ⭐️
+    func onSelectionItemAction(_ id: Int) {
+    
+        // 체크 안 되어 있으면 안 되어 있다고 알림, 되어 있으면 되어 있다고 알림
+        self.todoTableViewCell.checkBoxToggled(id)
+        
+    }
+    
 }
 
 extension MainVC: UITableViewDataSource {
@@ -231,8 +247,13 @@ extension MainVC: UITableViewDataSource {
         
         let cellData = self.todos[indexPath.row]
         
-        // 데이터 셀에 넣어주기
-        cell.updateUI(cellData)
+        
+        
+        // 데이터 셀에 넣어주기                  // ⭐️
+        cell.updateUI(cellData, self.todoTableViewCell.selectedTodos)
+        
+        // ⭐️
+        cell.checkBoxToggledEvent = onSelectionItemAction(_:)
         
         return cell
     }
@@ -240,11 +261,6 @@ extension MainVC: UITableViewDataSource {
 }
 
 extension MainVC: UITableViewDelegate {
-    
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return UITableView.automaticDimension
-//    }
-    
     
     //MARK: - 테이블뷰셀 좌우 스와이프
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

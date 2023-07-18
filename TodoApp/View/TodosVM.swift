@@ -9,12 +9,16 @@ import Foundation
 
 class TodosVM {
     
+    var isChecked = false
+    
     // 가공된 최종 데이터
     var todos: [Todo] = [] {
         didSet {
             self.notifyTodosChanged?(todos)
         }
     }
+    
+
     
     // 검색어
     var searchTerm: String = "" {
@@ -92,6 +96,8 @@ class TodosVM {
     init() {
         fetchTodos()
     }// init
+    
+
     
     
     /// 할일 수정
@@ -320,6 +326,7 @@ class TodosVM {
                     print("failure: \(failure)")
                     self.isLoading = false
                 }
+                
                 self.notifyRefreshEnded?()
                 
             })

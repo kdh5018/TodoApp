@@ -8,33 +8,26 @@
 import UIKit
 
 class PlusVC: UIViewController {
-    
-    var mainVC =  MainVC()
-    
-    var todoTableViewCell: TodoTableViewCell? = nil
-    
-    var todosVM: TodosVM? = nil
-    
-    
+        
     @IBOutlet weak var plusTodos: UITextField!
     
     @IBOutlet weak var plusTodosButton: UIButton!
     
     @IBOutlet weak var isDoneSwitch: UISwitch!
     
-    @IBOutlet weak var closeButton: UIButton!
+    var todoTableViewCell: TodoTableViewCell? = nil
+    
+    var todosVM: TodosVM? = nil
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
-
         self.plusTodosButton.addTarget(self, action: #selector(plusTodosButtonTapped), for: .touchUpInside)
         
         self.isDoneSwitch.setOn(false, animated: true)
         
-        #warning("로그에는 뜨는데 에러 메세지 얼럿 안 뜸")
         // 에러 발생 시
         self.todosVM?.notifyErrorOccured = { [weak self] errMsg in
             guard let self = self else { return }
@@ -44,32 +37,6 @@ class PlusVC: UIViewController {
         }
     }
     
-    @IBAction func switchIsDone(_ sender: UISwitch) {
-        if isDoneSwitch.isOn {
-            #warning("체크박스 체크, 취소선 그어져야 함")
-//            let image = UIImage(named: "checkbox_checked")
-//            self.todoTableViewCell?.checkBoxButton?.setImage(image, for: .normal)
-//            self.todoTableViewCell?.todosDetail?.attributedText = todoTableViewCell?.todosDetail.text?.strikeThrough()
-
-            self.todoTableViewCell?.isCheckedFunc()
-            
-            #warning("api 연동 시 완료로 체크되어야 함")
-            
-            
-            
-        } else {
-            #warning("체크박스 체크 X, 취소선 없어야 함")
-//            let image = UIImage(named: "checkbox_unchecked")
-//            self.todoTableViewCell?.checkBoxButton?.setImage(image, for: .normal)
-//            self.todoTableViewCell?.todosDetail?.attributedText = todoTableViewCell?.todosDetail.text?.removeStrikeThrough()
-            
-            self.todoTableViewCell?.isUnCheckedFunc()
-            
-            #warning("api 연동 시 미완료로 체크되어야 함")
-            
-        }
-    }
-
     @IBAction func backBtn(_ sender: UIButton) {
         
         self.dismiss(animated: true)
@@ -83,19 +50,20 @@ extension PlusVC {
     @objc func plusTodosButtonTapped() {
         let title = plusTodos.text ?? ""
     
-//        var isDone = false
-//
-//        if isDoneSwitch.isOn {
-//            isDone = true
-//        } else {
-//            isDone = false
-//        }
+//        guard let isDone = self.todo?.isDone else { return }
         
         self.todosVM?.addATodo(title: title,
-//                               isDone: isDone,
                                addedCompletion: {
             DispatchQueue.main.async {
-                
+                #warning("체크박스 체크, 취소선 그어져야 함")
+                #warning("api 연동 시 완료로 체크되어야 함")
+                if self.isDoneSwitch.isOn {
+                    self.todoTableViewCell?.isCheckedFunc()
+                } else {
+                #warning("체크박스 체크 X, 취소선 없어야 함")
+                #warning("api 연동 시 미완료로 체크되어야 함")
+                    self.todoTableViewCell?.isUnCheckedFunc()
+                }
                 self.dismiss(animated: true)
             }
         })

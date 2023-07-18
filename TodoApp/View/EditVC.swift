@@ -21,13 +21,12 @@ class EditVC: UIViewController {
     
     var selectedTodo: Todo?
     
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         editTextField.text = selectedTodo?.title
+        
+        isDoneSwitch.isOn = false
         
         editButton.addTarget(self, action: #selector(editTodosButtonTapped), for: .touchUpInside)
         

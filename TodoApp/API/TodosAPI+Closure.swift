@@ -31,9 +31,6 @@ extension TodosAPI {
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -107,9 +104,6 @@ extension TodosAPI {
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -186,9 +180,6 @@ extension TodosAPI {
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -272,9 +263,6 @@ extension TodosAPI {
         urlRequest.httpBody = form.bodyData
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -364,9 +352,6 @@ extension TodosAPI {
         
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -451,9 +436,6 @@ extension TodosAPI {
         
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -533,9 +515,6 @@ extension TodosAPI {
         
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))
@@ -601,9 +580,6 @@ extension TodosAPI {
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-            print(#fileID, #function, #line, "- data: \(data)")
-            print(#fileID, #function, #line, "- urlResponse: \(urlResponse)")
-            print(#fileID, #function, #line, "- error: \(error)")
             
             if let error = error {
                 return completion(.failure(ApiError.unknownError(error)))

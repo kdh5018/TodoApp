@@ -21,19 +21,25 @@ class TodoTableViewCell: UITableViewCell {
     
     var cellData: Todo? = nil
     
-    // 삭제 액션
-//    var onDeleteActionEvent: ((Int) -> Void)? = nil
+    // 선택된 할일들  // ⭐️
+    var selectedTodos: Set<Int> = [] {
+        didSet {
+            print(#fileID, #function, #line, "- selectedTodos: \(selectedTodos)")
+            self.notifySelectedTodoChanged?(Array(selectedTodos))
+        }
+    }
     
-    // 수정 액션
-//    var onEditActionEvent: ((_ id: Int, _ title: String) -> Void)? = nil
+    // ⭐️
+    var notifySelectedTodoChanged: ((_ selectedIds: [Int]) -> Void)? = nil
     
-    // 선택 액션
-//    var onSelectedActionEvent: ((_ id: Int, _ isOn: Bool) -> Void)? = nil
+    // 선택 액션    // ⭐️
+    var checkBoxToggledEvent: ((_ id: Int) -> Void)? = nil
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
         checkBoxButton.addTarget(self, action: #selector(checkBoxToggled), for: .touchUpInside)
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -46,7 +52,6 @@ class TodoTableViewCell: UITableViewCell {
         let image = UIImage(named: "checkbox_checked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.strikeThrough()
-        print("체크")
         
     }
     
@@ -54,29 +59,38 @@ class TodoTableViewCell: UITableViewCell {
         let image = UIImage(named: "checkbox_unchecked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.removeStrikeThrough()
-        print("체크해제")
     }
-
     
-    @objc func checkBoxToggled() {
+    @objc func checkBoxToggled(_ selectedTodoId: Int) {
+        guard let selectedTodoId = cellData?.id else { return }
+        self.checkBoxToggledEvent?(selectedTodoId)
         if isChecked == false {
             isChecked = true
-            isCheckedFunc()
+            
             #warning("체크가 되면 할일 상태도 완료가 되어야 함")
+            isCheckedFunc()
+            // ⭐️
+            self.selectedTodos.insert(selectedTodoId)
             #warning("체크가 되면 api에서도 완료로 변경이 되어야 함")
+            
+            
 
         } else if isChecked == true {
             isChecked = false
+            
+            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
             isUnCheckedFunc()
-            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
-            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
+            // ⭐️
+            self.selectedTodos.remove(selectedTodoId)
+            #warning("체크가 해제되면 api 할일 상태도 미완료가 되어야 함")
+            
         }
     }
     
     
     /// 셀데이터 적용
-    /// - Parameter cellData: 
-    func updateUI(_ cellData: Todo) {
+    /// - Parameter cellData:               // ⭐️
+    func updateUI(_ cellData: Todo, _ selectedTodos: Set<Int>) {
         
         guard let id: Int = cellData.id,
               let title: String = cellData.title,
@@ -89,6 +103,7 @@ class TodoTableViewCell: UITableViewCell {
         
         self.cellData = cellData
         
+        // 입력(최종 수정) 날짜
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         
@@ -101,10 +116,13 @@ class TodoTableViewCell: UITableViewCell {
             self.todosDate?.text = ""
         }
         
+        // 아이디
         self.todosId?.text = "\(id)"
         
+        // 입력한 TODO
         self.todosDetail?.text = title
         
+        // 입력한 시간
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         
@@ -117,6 +135,7 @@ class TodoTableViewCell: UITableViewCell {
             self.todosTime?.text = ""
         }
         
+        // 완료 미완료 여부
         if isDone == true {
             self.isCheckedFunc()
             
