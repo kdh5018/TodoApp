@@ -633,7 +633,7 @@ extension TodosAPI {
     static func addATodoAndFetchTodos(title: String, isDone: Bool = false, completion: @escaping (Result<BaseListResponse<Todo>, ApiError>) -> Void) {
         
         // 1
-        self.addATodo(title: title, completion: { result in
+        self.addATodo(title: title, isDone: isDone, completion: { result in
             switch result {
                 // 1-1
             case .success(_):

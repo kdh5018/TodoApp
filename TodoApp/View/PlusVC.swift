@@ -50,9 +50,10 @@ extension PlusVC {
     @objc func plusTodosButtonTapped() {
         let title = plusTodos.text ?? ""
     
-//        guard let isDone = self.todo?.isDone else { return }
+        let isDoneValue = isDoneSwitch.isOn
         
         self.todosVM?.addATodo(title: title,
+                               isDone: isDoneValue,
                                addedCompletion: {
             DispatchQueue.main.async {
                 #warning("체크박스 체크, 취소선 그어져야 함")

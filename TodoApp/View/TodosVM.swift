@@ -176,7 +176,7 @@ class TodosVM {
     /// - Parameters:
     ///   - title: 할일
     func addATodo(title: String,
-//                  isDone: Bool,
+                  isDone: Bool,
                   addedCompletion: @escaping () -> Void) {
         
         if isLoading {
@@ -187,7 +187,7 @@ class TodosVM {
         self.isLoading = true
 
         TodosAPI.addATodoAndFetchTodos(title: title,
-//                                       isDone: isDone,
+                                       isDone: isDone,
                                        completion: { [weak self] result in
             guard let self = self else { return }
             switch result {
