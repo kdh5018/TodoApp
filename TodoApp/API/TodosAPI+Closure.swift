@@ -708,7 +708,7 @@ extension TodosAPI {
         var apiErrors: [ApiError] = []
         
         // 응답 결과들
-        var apiResult: [Int : Result<BaseResponse<Todo>, ApiError>] = [:]
+//        var apiResult: [Int : Result<BaseResponse<Todo>, ApiError>] = [:]
         
         selectedTodoIds.forEach { aTodoId in
             // 디스패치 그룹에 넣음

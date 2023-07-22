@@ -56,13 +56,9 @@ extension PlusVC {
                                isDone: isDoneValue,
                                addedCompletion: {
             DispatchQueue.main.async {
-                #warning("체크박스 체크, 취소선 그어져야 함")
-                #warning("api 연동 시 완료로 체크되어야 함")
                 if self.isDoneSwitch.isOn {
                     self.todoTableViewCell?.isCheckedFunc()
                 } else {
-                #warning("체크박스 체크 X, 취소선 없어야 함")
-                #warning("api 연동 시 미완료로 체크되어야 함")
                     self.todoTableViewCell?.isUnCheckedFunc()
                 }
                 self.dismiss(animated: true)

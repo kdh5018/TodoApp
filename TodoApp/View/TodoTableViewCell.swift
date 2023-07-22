@@ -21,16 +21,6 @@ class TodoTableViewCell: UITableViewCell {
     
     var cellData: Todo? = nil
     
-    // 선택된 할일들  // ⭐️
-    var selectedTodos: Set<Int> = [] {
-        didSet {
-            print(#fileID, #function, #line, "- selectedTodos: \(selectedTodos)")
-            self.notifySelectedTodoChanged?(Array(selectedTodos))
-        }
-    }
-    
-    // ⭐️
-    var notifySelectedTodoChanged: ((_ selectedIds: [Int]) -> Void)? = nil
     
     // 선택 액션    // ⭐️
     var checkBoxToggledEvent: ((_ id: Int) -> Void)? = nil
@@ -67,21 +57,18 @@ class TodoTableViewCell: UITableViewCell {
         if isChecked == false {
             isChecked = true
             
-            #warning("체크가 되면 할일 상태도 완료가 되어야 함")
             isCheckedFunc()
-            // ⭐️
-            self.selectedTodos.insert(selectedTodoId)
+            
             #warning("체크가 되면 api에서도 완료로 변경이 되어야 함")
+            
             
             
 
         } else if isChecked == true {
             isChecked = false
             
-            #warning("체크가 해제되면 할일 상태도 미완료가 되어야 함")
             isUnCheckedFunc()
-            // ⭐️
-            self.selectedTodos.remove(selectedTodoId)
+
             #warning("체크가 해제되면 api 할일 상태도 미완료가 되어야 함")
             
         }
@@ -89,8 +76,8 @@ class TodoTableViewCell: UITableViewCell {
     
     
     /// 셀데이터 적용
-    /// - Parameter cellData:               // ⭐️
-    func updateUI(_ cellData: Todo, _ selectedTodos: Set<Int>) {
+    /// - Parameter cellData:
+    func updateUI(_ cellData: Todo) {
         
         guard let id: Int = cellData.id,
               let title: String = cellData.title,

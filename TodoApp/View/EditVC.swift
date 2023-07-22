@@ -26,7 +26,7 @@ class EditVC: UIViewController {
         
         editTextField.text = selectedTodo?.title
         
-        isDoneSwitch.isOn = false
+        #warning("현재 데이터 완료 상태에 따라 스위치 on / off 상태 나타내야 함")
         
         editButton.addTarget(self, action: #selector(editTodosButtonTapped), for: .touchUpInside)
         
@@ -54,7 +54,9 @@ extension EditVC {
         
         let editedTitle = editTextField.text ?? ""
         
-        self.todosVM?.editATodo(id, editedTitle, editedCompletion: {
+        let isDoneValue = isDoneSwitch.isOn
+        
+        self.todosVM?.editATodo(id, editedTitle, isDoneValue, editedCompletion: {
             DispatchQueue.main.async {
                 self.dismiss(animated: true)
             }

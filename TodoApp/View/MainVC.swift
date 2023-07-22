@@ -216,13 +216,6 @@ extension MainVC {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: dispatchWorkItem)
     }
     
-    // ⭐️
-    func onSelectionItemAction(_ id: Int) {
-    
-        // 체크 안 되어 있으면 안 되어 있다고 알림, 되어 있으면 되어 있다고 알림
-        self.todoTableViewCell.checkBoxToggled(id)
-        
-    }
     
 }
 
@@ -249,11 +242,8 @@ extension MainVC: UITableViewDataSource {
         
         
         
-        // 데이터 셀에 넣어주기                  // ⭐️
-        cell.updateUI(cellData, self.todoTableViewCell.selectedTodos)
-        
-        // ⭐️
-        cell.checkBoxToggledEvent = onSelectionItemAction(_:)
+        // 데이터 셀에 넣어주기
+        cell.updateUI(cellData)
         
         return cell
     }
@@ -266,7 +256,7 @@ extension MainVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 왼쪽
         let edit = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
-            #warning("sender는 수정해야할 데이터")
+
             let itemToEdited = self.todos[indexPath.row]
             
             self.performSegue(withIdentifier: "EditVC", sender: itemToEdited)

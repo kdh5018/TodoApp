@@ -104,7 +104,7 @@ class TodosVM {
     /// - Parameters:
     ///   - id: 수정할 데이터 아이디
     ///   - editedTitle: 수정할 내용
-    func editATodo(_ id: Int, _ editedTitle: String, editedCompletion: @escaping () -> Void) {
+    func editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping () -> Void) {
         
         print(#fileID, #function, #line, "- editedTitle: \(editedTitle)")
         
@@ -117,6 +117,7 @@ class TodosVM {
         
         TodosAPI.editATodo(id: id,
                            title: editedTitle,
+                           isDone: isDone,
                            completion: { [weak self] result in
             guard let self = self else { return }
             switch result {
