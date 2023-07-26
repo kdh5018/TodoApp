@@ -32,7 +32,7 @@ struct BaseResponse<T: Codable>: Codable {
 struct Todo: Codable {
     let id: Int?
     let title: String?
-    let isDone: Bool?
+    var isDone: Bool?
     let createdAt, updatedAt: String?
 
     enum CodingKeys: String, CodingKey {

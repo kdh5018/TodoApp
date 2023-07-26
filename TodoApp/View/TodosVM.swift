@@ -93,12 +93,55 @@ class TodosVM {
     // 현재페이지 변경 이벤트
     var notifyCurrentPageChanged: ((Int) -> Void)? = nil
     
+    // 어떤 녀석이 체크가 변경되었는지 알려주기
+    var notifyTodoCheckChanged: ((Int, Bool) -> Void)? = nil
+    
     init() {
         fetchTodos()
     }// init
     
 
+    func handleToggleTodo(existingTodo: Todo, checked: Bool) {
+        
+        guard let id = existingTodo.id,
+              let title = existingTodo.title else { return }
+        
+        self.editATodoIsDone(id, title, checked, editedCompletion: { id, checked in
+            // 재료를 줬음
+            self.notifyTodoCheckChanged?(id, checked)
+        })
+    }
     
+    func editATodoIsDone(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping (_ id: Int, _ checked: Bool) -> Void) {
+        
+        print(#fileID, #function, #line, "- editedTitle: \(editedTitle)")
+        
+        if isLoading {
+            print("로딩중입니다")
+            return
+        }
+        
+        self.isLoading = true
+        
+        TodosAPI.editATodo(id: id,
+                           title: editedTitle,
+                           isDone: isDone,
+                           completion: { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                self.isLoading = false
+                if let editedATodo: Todo = response.data,
+                   let editedTodoId: Int = editedATodo.id,
+                   let editedChecked: Bool = editedATodo.isDone {
+                    editedCompletion(editedTodoId, editedChecked)
+                }
+            case .failure(let failure):
+                self.isLoading = false
+                self.handleError(failure)
+            }
+        })
+    }
     
     /// 할일 수정
     /// - Parameters:

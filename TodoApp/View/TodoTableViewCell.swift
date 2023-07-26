@@ -21,9 +21,7 @@ class TodoTableViewCell: UITableViewCell {
     
     var cellData: Todo? = nil
     
-    
-    // 선택 액션    // ⭐️
-    var checkBoxToggledEvent: ((_ id: Int) -> Void)? = nil
+    var checkButtonClicked: ((_ cellData: Todo, _ checked: Bool) -> Void)? = nil
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -51,26 +49,23 @@ class TodoTableViewCell: UITableViewCell {
         todosDetail?.attributedText = todosDetail.text?.removeStrikeThrough()
     }
     
-    @objc func checkBoxToggled(_ selectedTodoId: Int) {
-        guard let selectedTodoId = cellData?.id else { return }
-        self.checkBoxToggledEvent?(selectedTodoId)
+    @objc func checkBoxToggled() {
+        
+        let toBeUpdatedIsDone = cellData?.isDone ?? false
+        
+        guard let cellData = cellData else { return }
+        
+        checkButtonClicked?(cellData, !toBeUpdatedIsDone)
+        
         if isChecked == false {
             isChecked = true
             
             isCheckedFunc()
             
-            #warning("체크가 되면 api에서도 완료로 변경이 되어야 함")
-            
-            
-            
-
         } else if isChecked == true {
             isChecked = false
             
-            isUnCheckedFunc()
-
-            #warning("체크가 해제되면 api 할일 상태도 미완료가 되어야 함")
-            
+            isUnCheckedFunc()            
         }
     }
     

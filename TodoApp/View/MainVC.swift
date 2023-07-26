@@ -38,6 +38,8 @@ class MainVC: UIViewController {
         refreshControl.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
         refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
         return refreshControl
+        // viewDidLoad
+        // self.myTableView.refreshControl = refreshControl
     }()
     
     // 검색 결과를 찾지 못했다
@@ -159,6 +161,21 @@ class MainVC: UIViewController {
             }
         }
         
+        self.todosVM.notifyTodoCheckChanged = { [weak self] id, checked in
+            guard let self = self else { return }
+            
+            guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
+                return
+            }
+            self.todos[foundIndex].isDone = checked
+            
+            let foundIndexPath = IndexPath(row: foundIndex, section: 0)
+            
+            DispatchQueue.main.async {
+                self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
+            }
+        }
+        
     }// viewDidLoad
     
     
@@ -244,6 +261,10 @@ extension MainVC: UITableViewDataSource {
         
         // 데이터 셀에 넣어주기
         cell.updateUI(cellData)
+        
+        cell.checkButtonClicked = { selectedTodo, checked in
+            self.todosVM.handleToggleTodo(existingTodo: selectedTodo, checked: checked)
+        }
         
         return cell
     }
