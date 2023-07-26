@@ -26,9 +26,16 @@ class EditVC: UIViewController {
         
         editTextField.text = selectedTodo?.title
         
-        #warning("현재 데이터 완료 상태에 따라 스위치 on / off 상태 나타내야 함")
         
         editButton.addTarget(self, action: #selector(editTodosButtonTapped), for: .touchUpInside)
+        
+//        if selectedTodo?.isDone == true {
+//            isDoneSwitch.isOn = true
+//        } else {
+//            isDoneSwitch.isOn = false
+//        }
+        
+        isDoneSwitch.isOn = selectedTodo?.isDone == true ? true : false
         
         // 에러 발생시
         self.todosVM?.notifyErrorOccured = { [weak self] errMsg in
@@ -56,11 +63,15 @@ extension EditVC {
         
         let isDoneValue = isDoneSwitch.isOn
         
-        self.todosVM?.editATodo(id, editedTitle, isDoneValue, editedCompletion: {
-            DispatchQueue.main.async {
-                self.dismiss(animated: true)
-            }
-        })
+//        self.todosVM?.editATodo(id, editedTitle, isDoneValue, editedCompletion: {
+//            DispatchQueue.main.async {
+//                self.dismiss(animated: true)
+//            }
+//        })
+        
+        self.todosVM?.handleInputAction(action: .editATodo(id, editedTitle, isDoneValue))
+        
+        self.dismiss(animated: true)
     }
     
     //MARK: - 에러 얼럿

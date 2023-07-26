@@ -93,26 +93,68 @@ class TodosVM {
     // 현재페이지 변경 이벤트
     var notifyCurrentPageChanged: ((Int) -> Void)? = nil
     
+    // 4.
     // 어떤 녀석이 체크가 변경되었는지 알려주기
     var notifyTodoCheckChanged: ((Int, Bool) -> Void)? = nil
+    
+    // ⭐️ 액션으로 나누기
+    enum InputAction {
+        case handleToggleTodo(existingTodo: Todo, checked: Bool)
+        case deleteATodo(id: Int)
+        case searchTodos(searchTerm: String, page: Int = 1)
+        case editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool)
+        case addATodo(title: String, isDone: Bool)
+        case fetchRefresh
+        case fetchMore
+    }
+    
+    
     
     init() {
         fetchTodos()
     }// init
     
+    // 액션함수들 스위치 케이스로 구분
+    func handleInputAction(action: InputAction) {
+        print(#fileID, #function, #line, "- ")
+        switch action {
+        case .handleToggleTodo(let existingTodo, let checked):
+            self.handleToggleTodo(existingTodo: existingTodo, checked: checked)
+        case .deleteATodo(let id):
+            self.deleteATodo(id: id)
+        case .searchTodos(let searchTerm, let page):
+            self.searchTodos(searchTerm: searchTerm, page: page)
+        case .editATodo(let id, let editedTitle, let isDone):
+            self.editATodo(id, editedTitle, isDone) {}
+        case .addATodo(let title, let isDone):
+            self.addATodo(title: title, isDone: isDone) {}
+        case .fetchRefresh:
+            self.fetchRefresh()
+        case .fetchMore:
+            self.fetchMore()
 
-    func handleToggleTodo(existingTodo: Todo, checked: Bool) {
+        default:
+            break
+        }
+    }
+    
+    // INPUT -> VM
+    // 2.
+    fileprivate func handleToggleTodo(existingTodo: Todo, checked: Bool) {
         
         guard let id = existingTodo.id,
               let title = existingTodo.title else { return }
         
+        // Transform
+        // 3.
         self.editATodoIsDone(id, title, checked, editedCompletion: { id, checked in
             // 재료를 줬음
+            // OUTPUT <- VM
             self.notifyTodoCheckChanged?(id, checked)
         })
     }
     
-    func editATodoIsDone(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping (_ id: Int, _ checked: Bool) -> Void) {
+    fileprivate func editATodoIsDone(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping (_ id: Int, _ checked: Bool) -> Void) {
         
         print(#fileID, #function, #line, "- editedTitle: \(editedTitle)")
         
@@ -147,7 +189,7 @@ class TodosVM {
     /// - Parameters:
     ///   - id: 수정할 데이터 아이디
     ///   - editedTitle: 수정할 내용
-    func editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping () -> Void) {
+    fileprivate func editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool, editedCompletion: @escaping () -> Void) {
         
         print(#fileID, #function, #line, "- editedTitle: \(editedTitle)")
         
@@ -186,7 +228,7 @@ class TodosVM {
     
     /// 할일 삭제
     /// - Parameter id: 삭제될 아이디
-    func deleteATodo(id: Int) {
+    fileprivate func deleteATodo(id: Int) {
         
         if isLoading {
             print("로딩중입니다.")
@@ -219,7 +261,7 @@ class TodosVM {
     /// 할 일 추가
     /// - Parameters:
     ///   - title: 할일
-    func addATodo(title: String,
+    fileprivate func addATodo(title: String,
                   isDone: Bool,
                   addedCompletion: @escaping () -> Void) {
         
@@ -261,7 +303,7 @@ class TodosVM {
     /// - Parameters:
     ///   - searchTerm: 검색어
     ///   - page: 페이지
-    func searchTodos(searchTerm: String, page: Int = 1) {
+    fileprivate func searchTodos(searchTerm: String, page: Int = 1) {
         
         if searchTerm.count < 1 {
             print("검색어가 없음")
@@ -316,12 +358,12 @@ class TodosVM {
     }
     
     /// 데이터 리프레시
-    func fetchRefresh() {
+    fileprivate func fetchRefresh() {
         self.fetchTodos(page: 1)
     }
     
     /// 더 가져오기
-    func fetchMore() {
+    fileprivate func fetchMore() {
         
         guard let pageInfo = self.pageInfo,
                 pageInfo.hasNext(),

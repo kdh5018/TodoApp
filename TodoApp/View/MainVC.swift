@@ -81,8 +81,6 @@ class MainVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-//        self.performSegue(withIdentifier: "PlusVC", sender: nil)
         
         // 테이블뷰 설정
         self.myTableView.register(TodoTableViewCell.uinib, forCellReuseIdentifier: TodoTableViewCell.reuseIdentifier)
@@ -161,17 +159,20 @@ class MainVC: UIViewController {
             }
         }
         
+        // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
         self.todosVM.notifyTodoCheckChanged = { [weak self] id, checked in
             guard let self = self else { return }
             
             guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
                 return
             }
+            // 6. 메모리에 있는 데이터 변경
             self.todos[foundIndex].isDone = checked
             
             let foundIndexPath = IndexPath(row: foundIndex, section: 0)
             
             DispatchQueue.main.async {
+                // 7. UI 변경
                 self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
             }
         }
@@ -202,7 +203,8 @@ extension MainVC {
     /// - Parameter sender:
     @objc fileprivate func handleRefresh(_ sender: UIRefreshControl) {
         // 뷰모델한테 시키기
-        self.todosVM.fetchRefresh()
+//        self.todosVM.fetchRefresh()
+        self.todosVM.handleInputAction(action: .fetchRefresh)
     }
     
     /// 검색어 입력
@@ -222,7 +224,8 @@ extension MainVC {
                     print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
                     self.todosVM.todos = []
                     // 뷰모델 검색어 갱신
-                    self.todosVM.searchTerm = userInput
+//                    self.todosVM.searchTerm = userInput
+                    self.todosVM.handleInputAction(action: .searchTodos(searchTerm: userInput))
                 }
             }
         })
@@ -262,8 +265,12 @@ extension MainVC: UITableViewDataSource {
         // 데이터 셀에 넣어주기
         cell.updateUI(cellData)
         
-        cell.checkButtonClicked = { selectedTodo, checked in
-            self.todosVM.handleToggleTodo(existingTodo: selectedTodo, checked: checked)
+//        cell.checkButtonClicked = { selectedTodo, checked in
+//            self.todosVM.handleToggleTodo(existingTodo: selectedTodo, checked: checked)
+//        }
+        
+        cell.checkButtonClicked = { existingTodo, checked in
+            self.todosVM.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
         }
         
         return cell
@@ -300,7 +307,8 @@ extension MainVC: UITableViewDelegate {
             // 찾은 값들 중 내가 필요한 id만 가져오기
             let id = itemToDelete.id!
 
-            self.todosVM.deleteATodo(id: id)
+//            self.todosVM.deleteATodo(id: id)
+            self.todosVM.handleInputAction(action: .deleteATodo(id: id))
             
             success(true)
         }
@@ -315,7 +323,8 @@ extension MainVC: UITableViewDelegate {
         let distanceFromBottom = scrollView.contentSize.height - contentYOffset
 
         if distanceFromBottom  - 200 < height {
-            self.todosVM.fetchMore()
+//            self.todosVM.fetchMore()
+            self.todosVM.handleInputAction(action: .fetchMore)
         }
     }
 }
@@ -328,7 +337,8 @@ extension MainVC {
         let alert = UIAlertController(title: "할일 삭제", message: "\(id) 할일을 삭제하겠습니까?", preferredStyle: .alert)
         
         let submitAction = UIAlertAction(title: "확인", style: .default, handler: { _ in
-            self.todosVM.deleteATodo(id: id)
+//            self.todosVM.deleteATodo(id: id)
+            self.todosVM.handleInputAction(action: .deleteATodo(id: id))
         })
         
         let closeAction = UIAlertAction(title: "닫기", style: .cancel)

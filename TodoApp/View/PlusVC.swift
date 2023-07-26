@@ -52,18 +52,27 @@ extension PlusVC {
     
         let isDoneValue = isDoneSwitch.isOn
         
-        self.todosVM?.addATodo(title: title,
-                               isDone: isDoneValue,
-                               addedCompletion: {
-            DispatchQueue.main.async {
-                if self.isDoneSwitch.isOn {
-                    self.todoTableViewCell?.isCheckedFunc()
-                } else {
-                    self.todoTableViewCell?.isUnCheckedFunc()
-                }
-                self.dismiss(animated: true)
-            }
-        })
+//        self.todosVM?.addATodo(title: title,
+//                               isDone: isDoneValue,
+//                               addedCompletion: {
+//            DispatchQueue.main.async {
+//                if self.isDoneSwitch.isOn {
+//                    self.todoTableViewCell?.isCheckedFunc()
+//                } else {
+//                    self.todoTableViewCell?.isUnCheckedFunc()
+//                }
+//                self.dismiss(animated: true)
+//            }
+//        })
+        
+        self.todosVM?.handleInputAction(action: .addATodo(title: title, isDone: isDoneValue))
+        
+        if self.isDoneSwitch.isOn {
+            self.todoTableViewCell?.isCheckedFunc()
+        } else {
+            self.todoTableViewCell?.isUnCheckedFunc()
+        }
+        self.dismiss(animated: true)
     }
     
     //MARK: - 에러 얼럿

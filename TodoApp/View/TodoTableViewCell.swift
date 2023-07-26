@@ -51,6 +51,7 @@ class TodoTableViewCell: UITableViewCell {
     
     @objc func checkBoxToggled() {
         
+        // 1. 셀 안에서 토글이 이루어짐
         let toBeUpdatedIsDone = cellData?.isDone ?? false
         
         guard let cellData = cellData else { return }
