@@ -98,7 +98,7 @@ class MainVC: UIViewController {
         
         
         // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
-        self.todosVM.notifyTodosChanged = { [weak self] updateTodos in
+        self.todosVM.output.notifyTodosChanged = { [weak self] updateTodos in
             guard let self = self else { return }
             self.todos = updateTodos
             DispatchQueue.main.async {
@@ -107,7 +107,7 @@ class MainVC: UIViewController {
         }
         
         // 페이지 변경
-        self.todosVM.notifyCurrentPageChanged = { [weak self] currentPage in
+        self.todosVM.output.notifyCurrentPageChanged = { [weak self] currentPage in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 print("페이지: \(currentPage)")
@@ -115,7 +115,7 @@ class MainVC: UIViewController {
         }
         
         // 로딩중 여부
-        self.todosVM.notifyLoadingStateChanged = { [weak self] isLoading in
+        self.todosVM.output.notifyLoadingStateChanged = { [weak self] isLoading in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if isLoading {
@@ -127,7 +127,7 @@ class MainVC: UIViewController {
         }
         
         // 당겨서 새로고침 완료
-        self.todosVM.notifyRefreshEnded = { [weak self]  in
+        self.todosVM.output.notifyRefreshEnded = { [weak self]  in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -135,7 +135,7 @@ class MainVC: UIViewController {
         }
         
         // 검색결과 못찾음
-        self.todosVM.notifySearchDataNotFound = { [weak self] notFound in
+        self.todosVM.output.notifySearchDataNotFound = { [weak self] notFound in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
@@ -143,7 +143,7 @@ class MainVC: UIViewController {
         }
         
         // 다음페이지 존재 여부
-        self.todosVM.notifyHasNextPage = { [weak self] hasNext in
+        self.todosVM.output.notifyHasNextPage = { [weak self] hasNext in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
@@ -151,7 +151,7 @@ class MainVC: UIViewController {
         }
         
         // 할 일 추가 완료 이벤트
-        self.todosVM.notifyTodoAdded = { [weak self] in
+        self.todosVM.output.notifyTodoAdded = { [weak self] in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
@@ -160,7 +160,7 @@ class MainVC: UIViewController {
         }
         
         // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
-        self.todosVM.notifyTodoCheckChanged = { [weak self] id, checked in
+        self.todosVM.output.notifyTodoCheckChanged = { [weak self] id, checked in
             guard let self = self else { return }
             
             guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {

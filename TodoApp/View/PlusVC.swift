@@ -29,7 +29,7 @@ class PlusVC: UIViewController {
         self.isDoneSwitch.setOn(false, animated: true)
         
         // 에러 발생 시
-        self.todosVM?.notifyErrorOccured = { [weak self] errMsg in
+        self.todosVM?.output.notifyErrorOccured = { [weak self] errMsg in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.showErrorAlert(errMsg: errMsg)

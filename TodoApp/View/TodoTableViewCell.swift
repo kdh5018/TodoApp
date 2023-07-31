@@ -40,6 +40,7 @@ class TodoTableViewCell: UITableViewCell {
         let image = UIImage(named: "checkbox_checked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.strikeThrough()
+        print(#fileID, #function, #line, "- 추가됨")
         
     }
     
@@ -47,6 +48,7 @@ class TodoTableViewCell: UITableViewCell {
         let image = UIImage(named: "checkbox_unchecked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.removeStrikeThrough()
+        print(#fileID, #function, #line, "- 추가 해지됨")
     }
     
     @objc func checkBoxToggled() {

@@ -38,7 +38,7 @@ class EditVC: UIViewController {
         isDoneSwitch.isOn = selectedTodo?.isDone == true ? true : false
         
         // 에러 발생시
-        self.todosVM?.notifyErrorOccured = { [weak self] errMsg in
+        self.todosVM?.output.notifyErrorOccured = { [weak self] errMsg in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.showErrorAlert(errMsg: errMsg)
