@@ -98,85 +98,9 @@ class MainVC: UIViewController {
         
         
         // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
-        self.todosVM.output.notifyTodosChanged = { [weak self] updateTodos in
-            guard let self = self else { return }
-            self.todos = updateTodos
-            DispatchQueue.main.async {
-                self.myTableView.reloadData()
-            }
-        }
+        self.bindViewModel(viewModel: self.todosVM)
         
-        // 페이지 변경
-        self.todosVM.output.notifyCurrentPageChanged = { [weak self] currentPage in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                print("페이지: \(currentPage)")
-            }
-        }
-        
-        // 로딩중 여부
-        self.todosVM.output.notifyLoadingStateChanged = { [weak self] isLoading in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                if isLoading {
-                    self.myTableView.tableFooterView = self.bottomIndicator
-                } else {
-                    self.myTableView.tableFooterView = nil
-                }
-            }
-        }
-        
-        // 당겨서 새로고침 완료
-        self.todosVM.output.notifyRefreshEnded = { [weak self]  in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-        }
-        
-        // 검색결과 못찾음
-        self.todosVM.output.notifySearchDataNotFound = { [weak self] notFound in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
-            }
-        }
-        
-        // 다음페이지 존재 여부
-        self.todosVM.output.notifyHasNextPage = { [weak self] hasNext in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
-            }
-        }
-        
-        // 할 일 추가 완료 이벤트
-        self.todosVM.output.notifyTodoAdded = { [weak self] in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                self.myTableView?.reloadData()
-            }
-        }
-        
-        // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
-        self.todosVM.output.notifyTodoCheckChanged = { [weak self] id, checked in
-            guard let self = self else { return }
-            
-            guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
-                return
-            }
-            // 6. 메모리에 있는 데이터 변경
-            self.todos[foundIndex].isDone = checked
-            
-            let foundIndexPath = IndexPath(row: foundIndex, section: 0)
-            
-            DispatchQueue.main.async {
-                // 7. UI 변경
-                self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
-            }
-        }
-        
+                
     }// viewDidLoad
     
     
@@ -193,6 +117,94 @@ class MainVC: UIViewController {
             destinationVC.todoTableViewCell = self.todoTableViewCell
             destinationVC.selectedTodo = editedTodo
         }
+    }
+}
+
+//MARK: - 뷰모델 바인딩 관련 VM -> View
+extension MainVC {
+    
+    // 뷰모델에서 결과로 나온 애들
+    private func bindViewModel(viewModel: TodosVM) {
+
+        viewModel.output.notifyTodosChanged = { [weak self] updateTodos in
+            guard let self = self else { return }
+            self.todos = updateTodos
+            DispatchQueue.main.async {
+                self.myTableView.reloadData()
+            }
+        }
+        
+        // 페이지 변경
+        viewModel.output.notifyCurrentPageChanged = { [weak self] currentPage in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                print("페이지: \(currentPage)")
+            }
+        }
+        
+        // 로딩중 여부
+        viewModel.output.notifyLoadingStateChanged = { [weak self] isLoading in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if isLoading {
+                    self.myTableView.tableFooterView = self.bottomIndicator
+                } else {
+                    self.myTableView.tableFooterView = nil
+                }
+            }
+        }
+        
+        // 당겨서 새로고침 완료
+        viewModel.output.notifyRefreshEnded = { [weak self]  in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
+        }
+        
+        // 검색결과 못찾음
+        viewModel.output.notifySearchDataNotFound = { [weak self] notFound in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
+            }
+        }
+        
+        // 다음페이지 존재 여부
+        viewModel.output.notifyHasNextPage = { [weak self] hasNext in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
+            }
+        }
+        
+        // 할 일 추가 완료 이벤트
+        viewModel.output.notifyTodoAdded = { [weak self] in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                self.myTableView?.reloadData()
+            }
+        }
+        
+        // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
+        viewModel.output.notifyTodoCheckChanged = { [weak self] id, checked in
+            guard let self = self else { return }
+            
+            guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
+                return
+            }
+            // 6. 메모리에 있는 데이터 변경
+            self.todos[foundIndex].isDone = checked
+            
+            let foundIndexPath = IndexPath(row: foundIndex, section: 0)
+            
+            DispatchQueue.main.async {
+                // 7. UI 변경
+                self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
+            }
+        }
+
     }
 }
 
