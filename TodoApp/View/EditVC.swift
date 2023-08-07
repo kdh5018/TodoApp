@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxRelay
 
 class EditVC: UIViewController {
 
@@ -15,7 +17,11 @@ class EditVC: UIViewController {
     
     @IBOutlet weak var editButton: UIButton!
     
-    var todosVM: TodosVM? = nil
+    var todosVM_Closure: TodosVM_Closure? = nil
+    
+    var todosVM_Rx: TodosVM_Rx? = nil
+    
+    var disposeBag = DisposeBag()
     
     var todoTableViewCell: TodoTableViewCell? = nil
     
@@ -38,12 +44,20 @@ class EditVC: UIViewController {
         isDoneSwitch.isOn = selectedTodo?.isDone == true ? true : false
         
         // 에러 발생시
-        self.todosVM?.output.notifyErrorOccured = { [weak self] errMsg in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx?
+            .notifyErrorOccured
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { editVC, errMsg in
                 self.showErrorAlert(errMsg: errMsg)
-            }
-        }
+            }).disposed(by: disposeBag)
+        
+//        self.todosVM?.output.notifyErrorOccured = { [weak self] errMsg in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.showErrorAlert(errMsg: errMsg)
+//            }
+//        }
 
     }
 
@@ -69,7 +83,8 @@ extension EditVC {
 //            }
 //        })
         
-        self.todosVM?.handleInputAction(action: .editATodo(id, editedTitle, isDoneValue))
+//        self.todosVM?.handleInputAction(action: .editATodo(id, editedTitle, isDoneValue))
+        self.todosVM_Rx?.handleInputAction(action: .editATodo(id, editedTitle, isDoneValue))
         
         self.dismiss(animated: true)
     }

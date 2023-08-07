@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		761E95EF2A41671E003D677E /* TodosVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95EE2A41671E003D677E /* TodosVM.swift */; };
+		761E95EF2A41671E003D677E /* TodosVM_Closure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95EE2A41671E003D677E /* TodosVM_Closure.swift */; };
 		761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95F42A417FFA003D677E /* URL+Ext.swift */; };
 		761E95F82A41831A003D677E /* MultipartForm in Frameworks */ = {isa = PBXBuildFile; productRef = 761E95F72A41831A003D677E /* MultipartForm */; };
 		761E95FA2A42D3B7003D677E /* URLRequest+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95F92A42D3B7003D677E /* URLRequest+Ext.swift */; };
 		761E95FC2A440E67003D677E /* EditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761E95FB2A440E67003D677E /* EditVC.swift */; };
 		761E95FD2A4419A2003D677E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76739F512A319CA90067E130 /* Main.storyboard */; };
+		76536E2B2A80A97900716881 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 76536E2A2A80A97900716881 /* RxCocoa */; };
+		76536E2D2A80A97900716881 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 76536E2C2A80A97900716881 /* RxRelay */; };
+		76536E2F2A80A97900716881 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 76536E2E2A80A97900716881 /* RxSwift */; };
+		76536E312A80A98E00716881 /* TodosVM_Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76536E302A80A98E00716881 /* TodosVM_Rx.swift */; };
 		76633F9E2A55369B0076B7CD /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76633F9D2A55369B0076B7CD /* ErrorResponse.swift */; };
 		76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4B2A319CA90067E130 /* AppDelegate.swift */; };
 		76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4D2A319CA90067E130 /* SceneDelegate.swift */; };
@@ -30,10 +34,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		761E95EE2A41671E003D677E /* TodosVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosVM.swift; sourceTree = "<group>"; };
+		761E95EE2A41671E003D677E /* TodosVM_Closure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosVM_Closure.swift; sourceTree = "<group>"; };
 		761E95F42A417FFA003D677E /* URL+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Ext.swift"; sourceTree = "<group>"; };
 		761E95F92A42D3B7003D677E /* URLRequest+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Ext.swift"; sourceTree = "<group>"; };
 		761E95FB2A440E67003D677E /* EditVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditVC.swift; sourceTree = "<group>"; };
+		76536E302A80A98E00716881 /* TodosVM_Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosVM_Rx.swift; sourceTree = "<group>"; };
 		76633F9D2A55369B0076B7CD /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		76739F482A319CA90067E130 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76739F4B2A319CA90067E130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +63,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76536E2D2A80A97900716881 /* RxRelay in Frameworks */,
+				76536E2B2A80A97900716881 /* RxCocoa in Frameworks */,
+				76536E2F2A80A97900716881 /* RxSwift in Frameworks */,
 				761E95F82A41831A003D677E /* MultipartForm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,7 +78,8 @@
 			children = (
 				76739F612A31A9100067E130 /* PlusVC.swift */,
 				761E95FB2A440E67003D677E /* EditVC.swift */,
-				761E95EE2A41671E003D677E /* TodosVM.swift */,
+				761E95EE2A41671E003D677E /* TodosVM_Closure.swift */,
+				76536E302A80A98E00716881 /* TodosVM_Rx.swift */,
 				76739F512A319CA90067E130 /* Main.storyboard */,
 				76739F4F2A319CA90067E130 /* MainVC.swift */,
 				768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */,
@@ -158,6 +167,9 @@
 			name = TodoApp;
 			packageProductDependencies = (
 				761E95F72A41831A003D677E /* MultipartForm */,
+				76536E2A2A80A97900716881 /* RxCocoa */,
+				76536E2C2A80A97900716881 /* RxRelay */,
+				76536E2E2A80A97900716881 /* RxSwift */,
 			);
 			productName = TodoApp;
 			productReference = 76739F482A319CA90067E130 /* TodoApp.app */;
@@ -189,6 +201,7 @@
 			mainGroup = 76739F3F2A319CA90067E130;
 			packageReferences = (
 				761E95F62A41831A003D677E /* XCRemoteSwiftPackageReference "MultipartForm" */,
+				76536E292A80A97900716881 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = 76739F492A319CA90067E130 /* Products */;
 			projectDirPath = "";
@@ -218,6 +231,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76536E312A80A98E00716881 /* TodosVM_Rx.swift in Sources */,
 				76633F9E2A55369B0076B7CD /* ErrorResponse.swift in Sources */,
 				76739F502A319CA90067E130 /* MainVC.swift in Sources */,
 				76739F622A31A9100067E130 /* PlusVC.swift in Sources */,
@@ -227,7 +241,7 @@
 				76739F722A36FB000067E130 /* ReuseIdentifiable.swift in Sources */,
 				761E95FC2A440E67003D677E /* EditVC.swift in Sources */,
 				76739F742A36FB210067E130 /* Nibbed.swift in Sources */,
-				761E95EF2A41671E003D677E /* TodosVM.swift in Sources */,
+				761E95EF2A41671E003D677E /* TodosVM_Closure.swift in Sources */,
 				761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */,
 				76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */,
 				768BF70E2A457A51005B5E7C /* TodoTableViewCell.swift in Sources */,
@@ -468,6 +482,14 @@
 				minimumVersion = 0.1.0;
 			};
 		};
+		76536E292A80A97900716881 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -475,6 +497,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 761E95F62A41831A003D677E /* XCRemoteSwiftPackageReference "MultipartForm" */;
 			productName = MultipartForm;
+		};
+		76536E2A2A80A97900716881 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76536E292A80A97900716881 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		76536E2C2A80A97900716881 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76536E292A80A97900716881 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		76536E2E2A80A97900716881 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76536E292A80A97900716881 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

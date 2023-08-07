@@ -6,17 +6,22 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import RxRelay
 
 class MainVC: UIViewController {
 
     @IBOutlet weak var myTableView: UITableView!
+    
+    var todosVM_Closure: TodosVM_Closure = TodosVM_Closure()
 
-    var todosVM: TodosVM = TodosVM()
+    var todosVM_Rx: TodosVM_Rx = TodosVM_Rx()
     var todoTableViewCell: TodoTableViewCell = TodoTableViewCell()
     
     var todos: [Todo] = []
     
-    
+    var disposeBag = DisposeBag()
     
     @IBOutlet weak var searchBar: UISearchBar!
     
@@ -98,7 +103,7 @@ class MainVC: UIViewController {
         
         
         // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
-        self.bindViewModel(viewModel: self.todosVM)
+        self.rxBindViewModel(viewModel: self.todosVM_Rx)
         
                 
     }// viewDidLoad
@@ -108,12 +113,12 @@ class MainVC: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         if let destinationVC = segue.destination as? PlusVC {
-            destinationVC.todosVM = self.todosVM
+            destinationVC.todosVM_Rx = self.todosVM_Rx
             destinationVC.todoTableViewCell = self.todoTableViewCell
             
         }
         if let destinationVC = segue.destination as? EditVC, let editedTodo = sender as? Todo {
-            destinationVC.todosVM = self.todosVM
+            destinationVC.todosVM_Rx = self.todosVM_Rx
             destinationVC.todoTableViewCell = self.todoTableViewCell
             destinationVC.selectedTodo = editedTodo
         }
@@ -123,87 +128,179 @@ class MainVC: UIViewController {
 //MARK: - 뷰모델 바인딩 관련 VM -> View
 extension MainVC {
     
-    // 뷰모델에서 결과로 나온 애들
-    private func bindViewModel(viewModel: TodosVM) {
-
-        viewModel.output.notifyTodosChanged = { [weak self] updateTodos in
-            guard let self = self else { return }
-            self.todos = updateTodos
-            DispatchQueue.main.async {
-                self.myTableView.reloadData()
-            }
-        }
+    private func rxBindViewModel(viewModel: TodosVM_Rx) {
+        self.todosVM_Rx
+            .todos
+            .withUnretained(self) // [weak self] 할 필요 없음
+            .observe(on: MainScheduler.instance) // 메인 스케줄러에서 진행
+            .subscribe(onNext: { mainVC,updatedTodos in
+            mainVC.todos = updatedTodos
+            mainVC.myTableView.reloadData()
+        }).disposed(by: disposeBag)
         
         // 페이지 변경
-        viewModel.output.notifyCurrentPageChanged = { [weak self] currentPage in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx
+            .todos
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, currentPage in
                 print("페이지: \(currentPage)")
-            }
-        }
+            }).disposed(by: disposeBag)
         
         // 로딩중 여부
-        viewModel.output.notifyLoadingStateChanged = { [weak self] isLoading in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx
+            .isLoading
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext:  { mainVC, isLoading in
                 if isLoading {
                     self.myTableView.tableFooterView = self.bottomIndicator
                 } else {
                     self.myTableView.tableFooterView = nil
                 }
-            }
-        }
+            }).disposed(by: disposeBag)
         
         // 당겨서 새로고침 완료
-        viewModel.output.notifyRefreshEnded = { [weak self]  in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx
+            .notifyRefreshEnded
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, _ in
                 self.refreshControl.endRefreshing()
-            }
-        }
+            }).disposed(by: disposeBag)
         
         // 검색결과 못찾음
-        viewModel.output.notifySearchDataNotFound = { [weak self] notFound in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx
+            .notifySearchDataNotFound
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, notFound in
                 self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
-            }
-        }
+            }).disposed(by: disposeBag)
         
         // 다음페이지 존재 여부
-        viewModel.output.notifyHasNextPage = { [weak self] hasNext in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
+        self.todosVM_Rx
+            .notifyHasNextPage
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, hasNext in
                 self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
-            }
-        }
+            }).disposed(by: disposeBag)
         
-        // 할 일 추가 완료 이벤트
-        viewModel.output.notifyTodoAdded = { [weak self] in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                self.myTableView?.reloadData()
-            }
-        }
+        // 할일 추가 완료 이벤트
+        self.todosVM_Rx
+            .notifyTodoAdded
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, _ in
+                self.myTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                self.myTableView.reloadData()
+            }).disposed(by: disposeBag)
         
         // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
-        viewModel.output.notifyTodoCheckChanged = { [weak self] id, checked in
-            guard let self = self else { return }
-            
-            guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
-                return
-            }
-            // 6. 메모리에 있는 데이터 변경
-            self.todos[foundIndex].isDone = checked
-            
-            let foundIndexPath = IndexPath(row: foundIndex, section: 0)
-            
-            DispatchQueue.main.async {
-                // 7. UI 변경
+        self.todosVM_Rx
+            .notifyTodoCheckChanged
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { mainVC, data in
+                let (id, checked) = data
+                
+                guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
+                    return
+                }
+                
+                self.todos[foundIndex].isDone = checked
+                
+                let foundIndexPath = IndexPath(row: foundIndex, section: 0)
+                
                 self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
-            }
-        }
+                
+            }).disposed(by: disposeBag)
+        
+
+    }
+    
+    // 뷰모델에서 결과로 나온 애들
+    private func bindViewModel(viewModel: TodosVM_Closure) {
+
+//        viewModel.output.notifyTodosChanged = { [weak self] updateTodos in
+//            guard let self = self else { return }
+//            self.todos = updateTodos
+//            DispatchQueue.main.async {
+//                self.myTableView.reloadData()
+//            }
+//        }
+        
+        // 페이지 변경
+//        viewModel.output.notifyCurrentPageChanged = { [weak self] currentPage in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                print("페이지: \(currentPage)")
+//            }
+//        }
+        
+        // 로딩중 여부
+//        viewModel.output.notifyLoadingStateChanged = { [weak self] isLoading in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                if isLoading {
+//                    self.myTableView.tableFooterView = self.bottomIndicator
+//                } else {
+//                    self.myTableView.tableFooterView = nil
+//                }
+//            }
+//        }
+        
+        // 당겨서 새로고침 완료
+//        viewModel.output.notifyRefreshEnded = { [weak self]  in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.refreshControl.endRefreshing()
+//            }
+//        }
+        
+        // 검색결과 못찾음
+//        viewModel.output.notifySearchDataNotFound = { [weak self] notFound in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.myTableView.backgroundView = notFound ? self.searchDataNotFoundView : nil
+//            }
+//        }
+        
+        // 다음페이지 존재 여부
+//        viewModel.output.notifyHasNextPage = { [weak self] hasNext in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
+//            }
+//        }
+        
+        // 할 일 추가 완료 이벤트
+//        viewModel.output.notifyTodoAdded = { [weak self] in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.myTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+//                self.myTableView?.reloadData()
+//            }
+//        }
+        
+        // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
+//        viewModel.output.notifyTodoCheckChanged = { [weak self] id, checked in
+//            guard let self = self else { return }
+//
+//            guard let foundIndex = self.todos.firstIndex(where: { $0.id == id }) else {
+//                return
+//            }
+//            // 6. 메모리에 있는 데이터 변경
+//            self.todos[foundIndex].isDone = checked
+//
+//            let foundIndexPath = IndexPath(row: foundIndex, section: 0)
+//
+//            DispatchQueue.main.async {
+//                // 7. UI 변경
+//                self.myTableView.reloadRows(at: [foundIndexPath], with: .none)
+//            }
+//        }
 
     }
 }
@@ -216,7 +313,8 @@ extension MainVC {
     @objc fileprivate func handleRefresh(_ sender: UIRefreshControl) {
         // 뷰모델한테 시키기
 //        self.todosVM.fetchRefresh()
-        self.todosVM.handleInputAction(action: .fetchRefresh)
+//        self.todosVM_Closure.handleInputAction(action: .fetchRefresh)
+        self.todosVM_Rx.handleInputAction(action: .fetchRefresh)
     }
     
     /// 검색어 입력
@@ -234,10 +332,12 @@ extension MainVC {
                           let self = self else { return }
                     
                     print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
-                    self.todosVM.todos = []
+//                    self.todosVM_Closure.todos = []
+                    self.todosVM_Rx.todos.accept([])
                     // 뷰모델 검색어 갱신
 //                    self.todosVM.searchTerm = userInput
-                    self.todosVM.handleInputAction(action: .searchTodos(searchTerm: userInput))
+//                    self.todosVM_Closure.handleInputAction(action: .searchTodos(searchTerm: userInput))
+                    self.todosVM_Rx.handleInputAction(action: .searchTodos(searchTerm: userInput))
                 }
             }
         })
@@ -282,7 +382,8 @@ extension MainVC: UITableViewDataSource {
 //        }
         
         cell.checkButtonClicked = { existingTodo, checked in
-            self.todosVM.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
+//            self.todosVM_Closure.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
+            self.todosVM_Rx.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
         }
         
         return cell
@@ -320,7 +421,8 @@ extension MainVC: UITableViewDelegate {
             let id = itemToDelete.id!
 
 //            self.todosVM.deleteATodo(id: id)
-            self.todosVM.handleInputAction(action: .deleteATodo(id: id))
+//            self.todosVM_Closure.handleInputAction(action: .deleteATodo(id: id))
+            self.todosVM_Rx.handleInputAction(action: .deleteATodo(id: id))
             
             success(true)
         }
@@ -336,7 +438,8 @@ extension MainVC: UITableViewDelegate {
 
         if distanceFromBottom  - 200 < height {
 //            self.todosVM.fetchMore()
-            self.todosVM.handleInputAction(action: .fetchMore)
+//            self.todosVM_Closure.handleInputAction(action: .fetchMore)
+            self.todosVM_Rx.handleInputAction(action: .fetchMore)
         }
     }
 }
@@ -350,7 +453,8 @@ extension MainVC {
         
         let submitAction = UIAlertAction(title: "확인", style: .default, handler: { _ in
 //            self.todosVM.deleteATodo(id: id)
-            self.todosVM.handleInputAction(action: .deleteATodo(id: id))
+//            self.todosVM_Closure.handleInputAction(action: .deleteATodo(id: id))
+            self.todosVM_Rx.handleInputAction(action: .deleteATodo(id: id))
         })
         
         let closeAction = UIAlertAction(title: "닫기", style: .cancel)

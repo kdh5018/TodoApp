@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TodosVM {
+class TodosVM_Closure {
     
     var isChecked = false
     
