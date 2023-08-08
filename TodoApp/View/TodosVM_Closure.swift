@@ -481,7 +481,7 @@ class TodosVM_Closure {
             print("인증 안됨")
         case .decodingError:
             print("디코딩 에러")
-        case .erroResponseFromServer:
+        case .errorResponseFromServer:
             print("서버에서 온 에러: \(apiError.info)")
             self.output.notifyErrorOccured?(apiError.info)
         default:

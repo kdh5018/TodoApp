@@ -24,20 +24,29 @@ class TodosVM_Rx {
     
     var isLoading: BehaviorRelay<Bool> = BehaviorRelay(value: false)
     
-    var notifyRefreshEnded: PublishSubject<Void> = PublishSubject<Void>()
-    
-    var notifySearchDataNotFound: PublishSubject<Bool> = PublishSubject<Bool>()
-    
-    var notifyHasNextPage: PublishSubject<Bool> = PublishSubject<Bool>()
-    
-    var notifyTodoAdded: PublishSubject<Void> = PublishSubject<Void>()
-    
-    var notifyTodoCheckChanged: PublishSubject<(Int, Bool)> = PublishSubject<(Int, Bool)>()
-    
-    var notifyErrorOccured: PublishSubject<String> = PublishSubject<String>()
-    
-    var notifyTodosCompleted: PublishSubject<Bool> = PublishSubject<Bool>()
-    
+    struct Output {
+        
+        var notifyRefreshEnded: PublishSubject<Void> = PublishSubject<Void>()
+        
+        var notifySearchDataNotFound: PublishSubject<Bool> = PublishSubject<Bool>()
+        
+        var notifyHasNextPage: PublishSubject<Bool> = PublishSubject<Bool>()
+        
+        var notifyTodoAdded: PublishSubject<Void> = PublishSubject<Void>()
+        
+        var notifyTodoCheckChanged: PublishSubject<(Int, Bool)> = PublishSubject<(Int, Bool)>()
+        
+        var notifyErrorOccured: PublishSubject<String> = PublishSubject<String>()
+        
+        var notifyTodosCompleted: PublishSubject<Bool> = PublishSubject<Bool>()
+        
+        var notifyDeleted: PublishSubject<Void> = PublishSubject<Void>()
+        
+        var notifyCurrentPageChanged: PublishSubject<Int> = PublishSubject<Int>()
+        
+    }
+
+    var output: Output = Output()
 
     
     // 검색어
@@ -56,9 +65,10 @@ class TodosVM_Rx {
             // 다음페이지 있는지 여부 이벤트 보내기
 //            self.output.notifyHasNextPage?(pageInfo?.hasNext() ?? true)
             let hasNextPage = pageInfo?.hasNext() ?? true
-            self.notifyHasNextPage.onNext(hasNextPage)
+            self.output.notifyHasNextPage.onNext(hasNextPage)
             // 현재페이지 변경시 데이터 보내기
-            self.output.notifyCurrentPageChanged?(currentPage)
+//            self.output.notifyCurrentPageChanged?(currentPage)
+            self.output.notifyCurrentPageChanged.onNext(currentPage)
         }
     }
     
@@ -76,7 +86,7 @@ class TodosVM_Rx {
     var isCompleting: Bool = false {
         didSet {
 //            self.output.notifyTodosCompleted?(isCompleting)
-            self.notifyTodosCompleted.onNext(isCompleting)
+            self.output.notifyTodosCompleted.onNext(isCompleting)
 //            self.notifyTodosCompleted?(isCompleting)
         }
     }
@@ -114,36 +124,26 @@ class TodosVM_Rx {
 //    // 4.
 //    // 어떤 녀석이 체크가 변경되었는지 알려주기
 //    var notifyTodoCheckChanged: ((Int, Bool) -> Void)? = nil
+
     
-    // ⭐️ 액션으로 나누기
-    enum InputAction {
-        case handleToggleTodo(existingTodo: Todo, checked: Bool)
-        case deleteATodo(id: Int)
-        case searchTodos(searchTerm: String, page: Int = 1)
-        case editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool)
-        case addATodo(title: String, isDone: Bool)
-        case fetchRefresh
-        case fetchMore
-    }
-    
-    struct Output {
+//    struct Output {
         // 할일 완료 여부
 //        var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
         
         // 삭제 이벤트
-        var notifyDeleted: (() -> Void)? = nil
+//        var notifyDeleted: (() -> Void)? = nil
         
         // 에러 발생 이벤트
 //        var notifyErrorOccured: ((_ errMsg: String) -> Void)? = nil
         
-        // 데이터 변경 이벤트
-        var notifyTodosChanged: (([Todo]) -> Void)? = nil
+//        // 데이터 변경 이벤트
+//        var notifyTodosChanged: (([Todo]) -> Void)? = nil
         
         // 현재페이지 변경 이벤트
-        var notifyCurrentPageChanged: ((Int) -> Void)? = nil
+//        var notifyCurrentPageChanged: ((Int) -> Void)? = nil
         
-        // 데이터 변경 이벤트
-        var notifyLoadingStateChanged: ((_ isLoading: Bool) -> Void)? = nil
+//        // 데이터 변경 이벤트
+//        var notifyLoadingStateChanged: ((_ isLoading: Bool) -> Void)? = nil
         
         // 리프레시 완료 이벤트
 //        var notifyRefreshEnded: (() -> Void)? = nil
@@ -160,13 +160,23 @@ class TodosVM_Rx {
         // 4.
         // 어떤 녀석이 체크가 변경되었는지 알려주기
 //        var notifyTodoCheckChanged: ((Int, Bool) -> Void)? = nil
-    }
-    
-    var output: Output = Output()
+//    }
     
     init() {
         fetchTodos()
     }// init
+    
+    
+    // ⭐️ 액션으로 나누기
+    enum InputAction {
+        case handleToggleTodo(existingTodo: Todo, checked: Bool)
+        case deleteATodo(id: Int)
+        case searchTodos(searchTerm: String, page: Int = 1)
+        case editATodo(_ id: Int, _ editedTitle: String, _ isDone: Bool)
+        case addATodo(title: String, isDone: Bool)
+        case fetchRefresh
+        case fetchMore
+    }
     
     // 액션함수들 스위치 케이스로 구분
     func handleInputAction(action: InputAction) {
@@ -205,7 +215,7 @@ class TodosVM_Rx {
             // 재료를 줬음
             // OUTPUT <- VM
 //            self.output.notifyTodoCheckChanged?(id, checked)
-            self.notifyTodoCheckChanged.onNext((id,checked))
+            self.output.notifyTodoCheckChanged.onNext((id,checked))
             if checked == true {
                 self.todoTableViewCell.isCheckedFunc()
             } else {
@@ -315,7 +325,8 @@ class TodosVM_Rx {
                     
                     self.todos.accept(filteredTodos)
                     
-                    self.output.notifyDeleted?()
+//                    self.output.notifyDeleted?()
+                    self.output.notifyDeleted.onNext(())
         
                 }
             case .failure(let failure):
@@ -353,7 +364,7 @@ class TodosVM_Rx {
                     self.todos.accept(fetchedTodos)
                     self.pageInfo = pageInfo
 //                    self.output.notifyTodoAdded?()
-                    self.notifyTodoAdded.onNext(())
+                    self.output.notifyTodoAdded.onNext(())
                     addedCompletion()
 //                    self.notifyTodosCompleted?(isDone)
                 }
@@ -363,7 +374,7 @@ class TodosVM_Rx {
                 self.handleError(failure)
             }
 //            self.output.notifyRefreshEnded?()
-            self.notifyRefreshEnded.onNext(())
+            self.output.notifyRefreshEnded.onNext(())
             
             self.fetchRefresh()
         })
@@ -391,7 +402,7 @@ class TodosVM_Rx {
         }
         
 //        self.output.notifySearchDataNotFound?(false)
-        self.notifySearchDataNotFound.onNext(false)
+        self.output.notifySearchDataNotFound.onNext(false)
         
         if page == 1 {
             self.todos.accept([])
@@ -426,7 +437,7 @@ class TodosVM_Rx {
                     self.handleError(failure)
                 }
 //                self.output.notifyRefreshEnded?()
-                self.notifyRefreshEnded.onNext(())
+                self.output.notifyRefreshEnded.onNext(())
                 
             })
         })
@@ -491,7 +502,7 @@ class TodosVM_Rx {
                 }
                 
 //                self.output.notifyRefreshEnded?()
-                self.notifyRefreshEnded.onNext(())
+                self.output.notifyRefreshEnded.onNext(())
                 
             })
         })
@@ -511,15 +522,15 @@ class TodosVM_Rx {
         case .noContentsError:
             print("컨텐츠 없음")
 //            self.output.notifySearchDataNotFound?(true)
-            self.notifySearchDataNotFound.onNext(true)
+            self.output.notifySearchDataNotFound.onNext(true)
         case .unauthorizedError:
             print("인증 안됨")
         case .decodingError:
             print("디코딩 에러")
-        case .erroResponseFromServer:
+        case .errorResponseFromServer:
             print("서버에서 온 에러: \(apiError.info)")
 //            self.output.notifyErrorOccured?(apiError.info)
-            self.notifyErrorOccured.onNext(apiError.info)
+            self.output.notifyErrorOccured.onNext(apiError.info)
         default:
             print("default")
             

@@ -125,9 +125,10 @@ class MainVC: UIViewController {
     }
 }
 
-//MARK: - 뷰모델 바인딩 관련 VM -> View
+
 extension MainVC {
     
+    //MARK: - 뷰모델 바인딩 관련 VM -> View (Rx)
     private func rxBindViewModel(viewModel: TodosVM_Rx) {
         self.todosVM_Rx
             .todos
@@ -140,7 +141,8 @@ extension MainVC {
         
         // 페이지 변경
         self.todosVM_Rx
-            .todos
+            .output
+            .notifyCurrentPageChanged
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { mainVC, currentPage in
@@ -162,6 +164,7 @@ extension MainVC {
         
         // 당겨서 새로고침 완료
         self.todosVM_Rx
+            .output
             .notifyRefreshEnded
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
@@ -171,6 +174,7 @@ extension MainVC {
         
         // 검색결과 못찾음
         self.todosVM_Rx
+            .output
             .notifySearchDataNotFound
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
@@ -180,6 +184,7 @@ extension MainVC {
         
         // 다음페이지 존재 여부
         self.todosVM_Rx
+            .output
             .notifyHasNextPage
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
@@ -189,6 +194,7 @@ extension MainVC {
         
         // 할일 추가 완료 이벤트
         self.todosVM_Rx
+            .output
             .notifyTodoAdded
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
@@ -199,6 +205,7 @@ extension MainVC {
         
         // 5. 체크 여부를 알고 서버와 연동시키기 위한 바인딩 설정
         self.todosVM_Rx
+            .output
             .notifyTodoCheckChanged
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
@@ -220,6 +227,7 @@ extension MainVC {
 
     }
     
+    //MARK: - 뷰모델 바인딩 관련 VM -> View (Closure)
     // 뷰모델에서 결과로 나온 애들
     private func bindViewModel(viewModel: TodosVM_Closure) {
 

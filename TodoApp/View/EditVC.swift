@@ -45,6 +45,7 @@ class EditVC: UIViewController {
         
         // 에러 발생시
         self.todosVM_Rx?
+            .output
             .notifyErrorOccured
             .withUnretained(self)
             .observe(on: MainScheduler.instance)

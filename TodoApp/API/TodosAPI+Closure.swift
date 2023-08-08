@@ -280,7 +280,7 @@ extension TodosAPI {
             case 422:
                 if let data = data,
                    let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                    return completion(.failure(ApiError.erroResponseFromServer(errorResponse)))
+                    return completion(.failure(ApiError.errorResponseFromServer(errorResponse)))
                     
                 }
             case 204:
