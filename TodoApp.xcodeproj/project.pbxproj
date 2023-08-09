@@ -30,6 +30,7 @@
 		76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F672A36DD360067E130 /* TodosAPI+Closure.swift */; };
 		76739F722A36FB000067E130 /* ReuseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F712A36FB000067E130 /* ReuseIdentifiable.swift */; };
 		76739F742A36FB210067E130 /* Nibbed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F732A36FB210067E130 /* Nibbed.swift */; };
+		767ADD452A83674F008D4C5C /* Optional+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 767ADD442A83674F008D4C5C /* Optional+Ext.swift */; };
 		768BF70E2A457A51005B5E7C /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 768BF70C2A457A51005B5E7C /* TodoTableViewCell.swift */; };
 		768BF70F2A457A51005B5E7C /* TodoTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */; };
 /* End PBXBuildFile section */
@@ -56,6 +57,7 @@
 		76739F672A36DD360067E130 /* TodosAPI+Closure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodosAPI+Closure.swift"; sourceTree = "<group>"; };
 		76739F712A36FB000067E130 /* ReuseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifiable.swift; sourceTree = "<group>"; };
 		76739F732A36FB210067E130 /* Nibbed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nibbed.swift; sourceTree = "<group>"; };
+		767ADD442A83674F008D4C5C /* Optional+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Ext.swift"; sourceTree = "<group>"; };
 		768BF70C2A457A51005B5E7C /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		768BF70D2A457A51005B5E7C /* TodoTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TodoTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,6 +118,7 @@
 				761E95F92A42D3B7003D677E /* URLRequest+Ext.swift */,
 				76739F712A36FB000067E130 /* ReuseIdentifiable.swift */,
 				76739F732A36FB210067E130 /* Nibbed.swift */,
+				767ADD442A83674F008D4C5C /* Optional+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 				76739F502A319CA90067E130 /* MainVC.swift in Sources */,
 				76739F622A31A9100067E130 /* PlusVC.swift in Sources */,
 				76536E332A80D6E200716881 /* TodosAPI+Rx.swift in Sources */,
+				767ADD452A83674F008D4C5C /* Optional+Ext.swift in Sources */,
 				76739F662A36DB070067E130 /* TodosAPI.swift in Sources */,
 				76739F642A36DA470067E130 /* TodoResponse.swift in Sources */,
 				761E95FA2A42D3B7003D677E /* URLRequest+Ext.swift in Sources */,

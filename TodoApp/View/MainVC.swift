@@ -130,10 +130,28 @@ extension MainVC {
     
     //MARK: - 뷰모델 바인딩 관련 VM -> View (Rx)
     private func rxBindViewModel(viewModel: TodosVM_Rx) {
+
+//        self.todosVM_Rx
+//            .todos
+//            .bind(to: self.myTableView.rx.items(cellIdentifier: TodoTableViewCell.reuseIdentifier, cellType: TodoTableViewCell.self)) { [weak self] index, cellData, cell in
+//
+//                guard let self = self else { return }
+//
+//                // 데이터 셀에 넣어주기
+//                cell.updateUI(cellData)
+//
+//                cell.checkButtonClicked = { existingTodo, checked in
+//                    self.todosVM_Rx.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
+//
+//                }
+//            }.disposed(by: disposeBag)
+
+
+        // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
         self.todosVM_Rx
             .todos
             .withUnretained(self) // [weak self] 할 필요 없음
-            .observe(on: MainScheduler.instance) // 메인 스케줄러에서 진행
+            .observe(on: MainScheduler.instance) // 메인 스케줄러(쓰레드)에서 진행
             .subscribe(onNext: { mainVC,updatedTodos in
             mainVC.todos = updatedTodos
             mainVC.myTableView.reloadData()
@@ -358,42 +376,45 @@ extension MainVC {
     
     
 }
+// 1. 갯수
+// 2. 어떤 셀
 
 extension MainVC: UITableViewDataSource {
-    
+
 //    func numberOfSections(in tableView: UITableView) -> Int {
 //        return 10
 //    }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todos.count
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoTableViewCell.reuseIdentifier, for: indexPath) as? TodoTableViewCell else {
             return UITableViewCell()
         }
-        
+
         let cellData = self.todos[indexPath.row]
-        
-        
-        
+
+
+
         // 데이터 셀에 넣어주기
         cell.updateUI(cellData)
-        
+
 //        cell.checkButtonClicked = { selectedTodo, checked in
 //            self.todosVM.handleToggleTodo(existingTodo: selectedTodo, checked: checked)
 //        }
-        
+
         cell.checkButtonClicked = { existingTodo, checked in
-//            self.todosVM_Closure.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
             self.todosVM_Rx.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
+//            self.todosVM_Closure.handleInputAction(action: .handleToggleTodo(existingTodo: existingTodo, checked: checked))
+
         }
-        
+
         return cell
     }
 
@@ -416,6 +437,8 @@ extension MainVC: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [edit])
     }
     
+    
+    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 오른쪽
         let delete = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
@@ -425,11 +448,10 @@ extension MainVC: UITableViewDelegate {
             let itemToDelete = self.todos[indexPath.row]
             print("itemToDelete: \(itemToDelete)")
             
+            
             // 찾은 값들 중 내가 필요한 id만 가져오기
             let id = itemToDelete.id!
-
-//            self.todosVM.deleteATodo(id: id)
-//            self.todosVM_Closure.handleInputAction(action: .deleteATodo(id: id))
+            
             self.todosVM_Rx.handleInputAction(action: .deleteATodo(id: id))
             
             success(true)

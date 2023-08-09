@@ -19,6 +19,8 @@ class TodosVM_Rx {
     
     var todoTableViewCell = TodoTableViewCell()
     
+    var disposeBag = DisposeBag()
+    
     // 가공된 최종 데이터
     var todos: BehaviorRelay<[Todo]> = BehaviorRelay<[Todo]>(value: [])
     
@@ -235,24 +237,20 @@ class TodosVM_Rx {
         
         self.isLoading.accept(true)
         
-        TodosAPI.editATodo(id: id,
-                           title: editedTitle,
-                           isDone: isDone,
-                           completion: { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
+        TodosAPI.editATodoWithObservable(id: id, title: editedTitle, isDone: isDone)
+            .do(onError: { failure in
                 self.isLoading.accept(false)
+                self.handleError(failure)
+            },onCompleted: {
+                self.isLoading.accept(false)
+            })
+            .subscribe(onNext: { response in
                 if let editedATodo: Todo = response.data,
                    let editedTodoId: Int = editedATodo.id,
                    let editedChecked: Bool = editedATodo.isDone {
                     editedCompletion(editedTodoId, editedChecked)
                 }
-            case .failure(let failure):
-                self.isLoading.accept(false)
-                self.handleError(failure)
-            }
-        })
+            }).disposed(by: disposeBag)
     }
     
     /// 할일 수정
@@ -270,14 +268,14 @@ class TodosVM_Rx {
         
         self.isLoading.accept(true)
         
-        TodosAPI.editATodo(id: id,
-                           title: editedTitle,
-                           isDone: isDone,
-                           completion: { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
+        TodosAPI.editATodoWithObservable(id: id, title: editedTitle, isDone: isDone)
+            .do(onError: { failure in
                 self.isLoading.accept(false)
+                self.handleError(failure)
+            },onCompleted: {
+                self.isLoading.accept(false)
+            })
+            .subscribe(onNext: { response in
                 if let editedATodo: Todo = response.data,
                    let editedTodoId: Int = editedATodo.id,
                    let editedIndex = self.todos.value.firstIndex(where: { $0.id ?? 0 == editedTodoId }) {
@@ -293,11 +291,7 @@ class TodosVM_Rx {
                     editedCompletion()
                             
                 }
-            case .failure(let failure):
-                self.isLoading.accept(false)
-                self.handleError(failure)
-            }
-        })
+            }).disposed(by: disposeBag)
     }
     
     
@@ -312,11 +306,14 @@ class TodosVM_Rx {
         
         self.isLoading.accept(true)
         
-        TodosAPI.deleteATodo(id: id, completion: { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
+        TodosAPI.deleteATodoWithObservable(id: id)
+            .do(onError: { failure in
                 self.isLoading.accept(false)
+                self.handleError(failure)
+            },onCompleted: {
+                self.isLoading.accept(false)
+            })
+            .subscribe(onNext: { response in
                 if let deletedATodo: Todo = response.data,
                    let deletedTodoId: Int = deletedATodo.id {
                     
@@ -327,13 +324,8 @@ class TodosVM_Rx {
                     
 //                    self.output.notifyDeleted?()
                     self.output.notifyDeleted.onNext(())
-        
                 }
-            case .failure(let failure):
-                self.isLoading.accept(false)
-                self.handleError(failure)
-            }
-        })
+            }).disposed(by: disposeBag)
     }
     
     
@@ -350,34 +342,30 @@ class TodosVM_Rx {
         }
         
         self.isLoading.accept(true)
-
-        TodosAPI.addATodoAndFetchTodos(title: title,
-                                       isDone: isDone,
-                                       completion: { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
+        
+        
+        TodosAPI.addATodoAndFetchTodosWithObservable(title: title, isDone: isDone)
+            .do(onError: { failure in
                 self.isLoading.accept(false)
-                // 페이지 갱신
-                if let fetchedTodos: [Todo] = response.data,
-                   let pageInfo: Meta = response.meta {
+                self.handleError(failure)
+            },onCompleted: {
+                self.isLoading.accept(false)
+                self.output.notifyRefreshEnded.onNext(())
+                self.fetchRefresh()
+            })
+            .compactMap{ Optional(tuple: ($0.meta, $0.data))}
+            .subscribe(onNext: { pageInfo, fetchedTodos in
+//                if let fetchedTodos: [Todo] = response.data,
+//                   let pageInfo: Meta = response.meta {
                     self.todos.accept(fetchedTodos)
                     self.pageInfo = pageInfo
 //                    self.output.notifyTodoAdded?()
                     self.output.notifyTodoAdded.onNext(())
                     addedCompletion()
 //                    self.notifyTodosCompleted?(isDone)
-                }
-            case .failure(let failure):
-                print("failure: \(failure)")
-                self.isLoading.accept(false)
-                self.handleError(failure)
-            }
-//            self.output.notifyRefreshEnded?()
-            self.output.notifyRefreshEnded.onNext(())
-            
-            self.fetchRefresh()
-        })
+//                }
+            }).disposed(by: disposeBag)
+
     }
     
     
@@ -410,37 +398,31 @@ class TodosVM_Rx {
         
         isLoading.accept(true)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: {
-            // 서비스 로직
-            TodosAPI.searchTodos(searchTerm: searchTerm,
-                                 page: page,
-                                 completion: { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(let response):
-                    self.isLoading.accept(false)
-                    // 페이지 갱신
-                    if let fetchedTodos: [Todo] = response.data,
-                       let pageInfo: Meta = response.meta {
-                        if page == 1 {
-                            self.todos.accept(fetchedTodos)
-                        } else {
-                            let addedTodos = self.todos.value + fetchedTodos
-                            
-                            self.todos.accept(addedTodos)
-                        }
-                        self.pageInfo = pageInfo
-                    }
-                case .failure(let failure):
-                    print("failure: \(failure)")
-                    self.isLoading.accept(false)
-                    self.handleError(failure)
-                }
-//                self.output.notifyRefreshEnded?()
+        Observable.just(())
+            .delay(RxTimeInterval.milliseconds(700), scheduler: MainScheduler.instance)
+            .flatMapLatest{
+                TodosAPI
+                    .searchTodosWithObservable(searchTerm: searchTerm, page: page)
+            }
+            .do(onError: { failure in
+                self.isLoading.accept(false)
+                self.handleError(failure)
+            }, onCompleted: {
+                self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
-                
             })
-        })
+            .compactMap{ Optional(tuple: ($0.meta, $0.data )) }
+            .subscribe(onNext: { pageInfo, fetchedTodos in
+                    if page == 1 {
+                        self.todos.accept(fetchedTodos)
+                    } else {
+                        let addedTodos = self.todos.value + fetchedTodos
+                        
+                        self.todos.accept(addedTodos)
+                    }
+                    self.pageInfo = pageInfo
+            }).disposed(by: disposeBag)
+
     }
     
     /// 데이터 리프레시
@@ -475,37 +457,32 @@ class TodosVM_Rx {
         
         isLoading.accept(true)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: {
-            // 서비스 로직
-            TodosAPI.fetchTodos(page: page,
-                                completion: { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(let response):
-                    self.isLoading.accept(false)
-                    // 페이지 갱신
-                    
-                    if let fetchedTodos: [Todo] = response.data,
-                       let pageInfo: Meta = response.meta {
-                        if page == 1 {
-                            self.todos.accept(fetchedTodos)
-                        } else {
-                            let addedTodos = self.todos.value + fetchedTodos
-                            
-                            self.todos.accept(addedTodos)
-                        }
-                        self.pageInfo = pageInfo
-                    }
-                case .failure(let failure):
-                    print("failure: \(failure)")
-                    self.isLoading.accept(false)
-                }
-                
-//                self.output.notifyRefreshEnded?()
+        // 딜레이 주기
+        Observable.just(())
+            .delay(RxTimeInterval.milliseconds(700), scheduler: MainScheduler.instance)
+            .flatMapLatest{
+                TodosAPI
+                    .fetchTodosWithObservable(page: page)
+            }
+            .do(onError: { error in
+                self.pageInfo = nil
+                self.handleError(error)
+            }, onCompleted: {
+                self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
-                
             })
-        })
+            .compactMap{ Optional(tuple: ($0.meta, $0.data)) }
+            .subscribe(onNext: { pageInfo, fetchedTodos in
+                // 페이지 갱신
+                    if page == 1 {
+                        self.todos.accept(fetchedTodos)
+                    } else {
+                        let addedTodos = self.todos.value + fetchedTodos
+                        
+                        self.todos.accept(addedTodos)
+                    }
+                    self.pageInfo = pageInfo
+            }).disposed(by: disposeBag)
     }
     
     
