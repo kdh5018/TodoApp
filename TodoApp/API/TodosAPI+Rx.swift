@@ -54,26 +54,26 @@ extension TodosAPI {
                 default:
                     print("default")
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let listResponse = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
-                    let todos = listResponse.data
+                    let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
+                    let todos: [Todo]? = listResponse.data
                     
                     print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
-                    guard let todos = todos,
+                    guard let todos: [Todo] = todos,
                           !todos.isEmpty else {
                         return .failure(ApiError.noContentsError)
                     }
                     
                     return .success(listResponse)
-
+                    
                 } catch {
                     // decoding error
                     return .failure(ApiError.decodingError)
-
+                    
                 }
             })
         
@@ -85,14 +85,14 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "?page=\(page)"
+        let urlString: String = baseURL + "/todos" + "?page=\(page)"
         
-        guard let url = URL(string: urlString) else {
-//            return Observable.just(.failure(ApiError.notAllowedURL)) // just는 하나의 값을 방출하는 연산자
+        guard let url: URL = URL(string: urlString) else {
+            //            return Observable.just(.failure(ApiError.notAllowedURL)) // just는 하나의 값을 방출하는 연산자
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
@@ -102,53 +102,53 @@ extension TodosAPI {
                 
                 guard let httpResponse = urlResponse as? HTTPURLResponse else {
                     print(#fileID, #function, #line, "- bad Status code: ")
-//                    return .failure(ApiError.unknownError(nil))
+                    //                    return .failure(ApiError.unknownError(nil))
                     throw ApiError.unknownError(nil)
                 }
                 
                 if !(200...299).contains(httpResponse.statusCode) {
-//                    return .failure(ApiError.badStatus(httpResponse.statusCode))
+                    //                    return .failure(ApiError.badStatus(httpResponse.statusCode))
                     throw ApiError.badStatus(httpResponse.statusCode)
                 }
                 
                 switch httpResponse.statusCode {
                 case 400:
-//                    return .failure(ApiError.badRequestError)
+                    //                    return .failure(ApiError.badRequestError)
                     throw ApiError.badRequestError
                 case 204:
-//                    return .failure(ApiError.noContentsError)
+                    //                    return .failure(ApiError.noContentsError)
                     throw ApiError.noContentsError
                 default:
                     print("default")
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let listResponse = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
-                    let todos = listResponse.data
+                    let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
+                    let todos: [Todo]? = listResponse.data
                     
                     print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
-                    guard let todos = todos,
+                    guard let todos: [Todo] = todos,
                           !todos.isEmpty else {
-//                        return .failure(ApiError.noContentsError)
+                        //                        return .failure(ApiError.noContentsError)
                         throw ApiError.noContentsError
                     }
                     
                     return listResponse
-//                    return .success(listResponse)
-
+                    //                    return .success(listResponse)
+                    
                 } catch {
                     // decoding error
-//                    return .failure(ApiError.decodingError)
+                    //                    return .failure(ApiError.decodingError)
                     throw ApiError.decodingError
-
+                    
                 }
             })
         
     }
-
+    
     /// 특정 할 일 가져오기
     /// - Parameters:
     ///   - id: 가져올 데이터 아이디
@@ -159,13 +159,13 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "/\(id)"
+        let urlString: String = baseURL + "/todos" + "/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
@@ -176,7 +176,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 400:
@@ -193,20 +193,20 @@ extension TodosAPI {
                 
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
-                
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
-
+                    
                 }
-
+                
             })
         
     }
-
+    
     /// 할 일 검색하기
     /// - Parameters:
     ///   - searchTerm: 검색할 내용
@@ -218,19 +218,19 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-//        let urlString = baseURL + "/todos/search" + "?page=\(page)" + "&query=\(searchTerm)"
+        //        let urlString = baseURL + "/todos/search" + "?page=\(page)" + "&query=\(searchTerm)"
         
         // URLComponents : URL 구성하는 구조로써 정의하면 보다 편하게 URL 설정을 할 수 있음
         // URL+Ext로 익스텐션(헬퍼 메소드)을 설정해서 보다 편하게 URL 설정
-        let requestUrl = URL(baseUrl: baseURL + "/todos/search", queryItems: ["query": searchTerm, "page": "\(page)"])
+        let requestUrl: URL? = URL(baseUrl: baseURL + "/todos/search", queryItems: ["query": searchTerm, "page": "\(page)"])
         
-//        var urlComponents = URLComponents(string: baseURL + "/todos/search")
-//        urlComponents?.queryItems = [
-//            URLQueryItem(name: "query", value: searchTerm),
-//            URLQueryItem(name: "page", value: "\(page)")
-//        ]
+        //        var urlComponents = URLComponents(string: baseURL + "/todos/search")
+        //        urlComponents?.queryItems = [
+        //            URLQueryItem(name: "query", value: searchTerm),
+        //            URLQueryItem(name: "page", value: "\(page)")
+        //        ]
         
-        guard let url = requestUrl else {
+        guard let url: URL = requestUrl else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
@@ -260,26 +260,26 @@ extension TodosAPI {
                 default:
                     print("default")
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let listResponse = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
-                    let todos = listResponse.data
+                    let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: data)
+                    let todos: [Todo]? = listResponse.data
                     
                     print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
-                    guard let todos = todos,
+                    guard let todos: [Todo] = todos,
                           !todos.isEmpty else {
                         throw ApiError.noContentsError
                     }
                     
                     return listResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
-
+                    
                 }
             })
         
@@ -296,13 +296,13 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos"
+        let urlString: String = baseURL + "/todos"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
@@ -324,7 +324,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 401:
@@ -339,19 +339,19 @@ extension TodosAPI {
                 if !(200...299).contains(httpResponse.statusCode) {
                     throw ApiError.badStatus(httpResponse.statusCode)
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
                     
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
-
+                    
                 }
-
+                
             })
         
     }
@@ -367,26 +367,21 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos-json"
+        let urlString: String = baseURL + "/todos-json"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
-        
         let requestParams: [String : Any] = ["title" : title, "is_done" : "\(isDone)"]
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
+            let jsonData: Data = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
             
             urlRequest.httpBody = jsonData
         } catch {
@@ -403,7 +398,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 400:
@@ -417,17 +412,17 @@ extension TodosAPI {
                 if !(200...299).contains(httpResponse.statusCode) {
                     throw ApiError.badStatus(httpResponse.statusCode)
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
                     
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
-
+                    
                 }
             })
         
@@ -445,26 +440,21 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos-json/\(id)"
+        let urlString: String = baseURL + "/todos-json/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
-        
         let requestParams: [String : Any] = ["title" : title, "is_done" : "\(isDone)"]
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
+            let jsonData: Data = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
             
             urlRequest.httpBody = jsonData
         } catch {
@@ -481,7 +471,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 400:
@@ -495,13 +485,13 @@ extension TodosAPI {
                 if !(200...299).contains(httpResponse.statusCode) {
                     throw ApiError.badStatus(httpResponse.statusCode)
                 }
-
+                
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
                     
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
@@ -522,21 +512,16 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos/\(id)"
+        let urlString: String = baseURL + "/todos/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "PUT"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
         
         let requestParams: [String : String] = ["title" : title, "is_done" : "\(isDone)"]
         
@@ -553,7 +538,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 400:
@@ -570,14 +555,14 @@ extension TodosAPI {
                 
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
                     
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
-
+                    
                 }
             })
         
@@ -593,13 +578,13 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "/\(id)"
+        let urlString: String = baseURL + "/todos" + "/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return Observable.error(ApiError.notAllowedURL)
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "DELETE"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
@@ -612,7 +597,7 @@ extension TodosAPI {
                     print(#fileID, #function, #line, "- bad Status code: ")
                     throw ApiError.unknownError(nil)
                 }
-
+                
                 
                 switch httpResponse.statusCode {
                 case 400:
@@ -629,10 +614,10 @@ extension TodosAPI {
                 
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: data)
                     
                     return baseResponse
-
+                    
                 } catch {
                     // decoding error
                     throw ApiError.decodingError
@@ -653,11 +638,13 @@ extension TodosAPI {
             .flatMapLatest { _ in
                 self.fetchTodosWithObservable()
             } // BaseListResponse<Todo>
-            .compactMap{ $0.data } // [Todo]
+            .compactMap { (response: BaseListResponse<Todo>) -> [Todo]? in
+                return response.data
+            } // [Todo]
             .catch({ err in
                 return Observable.just([])
             })
-            .share(replay: 1)
+                .share(replay: 1)
     }
     
     
@@ -670,17 +657,24 @@ extension TodosAPI {
         // 1. 매개변수 배열 -> Observable 스트림 배열로 만들기
         
         // 2. 배열로 단일 API 호출
-        let apiCallObservables = selectedTodoIds.map{ id -> Observable<Int?> in
+        let apiCallObservables: [Observable<Int?>] = selectedTodoIds.map{ id -> Observable<Int?> in
             return self.deleteATodoWithObservable(id: id)
-                .map{ $0.data?.id } // Int?
+            //                .map{ $0.data?.id } // Int?
+                .map{ (response: BaseResponse<Todo>) -> Int? in
+                    return response.data?.id
+                }
                 .catchAndReturn(nil)
-//                .catch{ err in
-//                    return Observable.just(nil)
-//                }
+            //                .catch{ err in
+            //                    return Observable.just(nil)
+            //                }
         }
         
         return Observable.zip(apiCallObservables) // Observable<[Int?]>
-            .map{ $0.compactMap{ $0 } } // [Int]
+            .map { (deletedTodoIds: [Int?]) -> [Int] in
+                return deletedTodoIds.compactMap { (id: Int?) -> Int? in
+                    return id
+                }
+            }
     }
     
     static func deleteSelectedTodosWithObservableWithMerge(selectedTodoIds: [Int]) -> Observable<Int> {
@@ -690,40 +684,17 @@ extension TodosAPI {
         // 2. 배열로 단일 API 호출
         let apiCallObservables = selectedTodoIds.map{ id -> Observable<Int?> in
             return self.deleteATodoWithObservable(id: id)
-                .map{ $0.data?.id } // Int?
+            //                .map{ $0.data?.id } // Int?
+                .map{ (response: BaseResponse<Todo>) -> Int? in
+                    return response.data?.id
+                }
                 .catchAndReturn(nil)
         }
         
-        return Observable.merge(apiCallObservables).compactMap{ $0 }
-    }
-    
-    /// 선택된 할 일들 가져오기
-    /// - Parameters:
-    ///   - selectedTodoIds: 선택된 할 일 아이디들
-    ///   - completion: 응답 결과
-    static func fetchedSelectedTodosWithObservableWithZip(selectedTodoIds: [Int]) -> Observable<[Int]> {
-        
-        let apiCallObservables = selectedTodoIds.map{ id -> Observable<Int?> in
-            return self.fetchATodoWithObservable(id: id)
-                .map{ $0.data?.id}
-                .catchAndReturn(nil)
-        }
-        
-        return Observable.zip(apiCallObservables)
-            .map{ $0.compactMap{ $0 } }
+        return Observable.merge(apiCallObservables)
+            .compactMap { (deletedTodoId: Int?) -> Int? in
+                return deletedTodoId
+            }
         
     }
-    
-    static func fetchedSelectedTodosWithObservableWithMerge(selectedTodoIds: [Int]) -> Observable<Int> {
-        
-        let apiCallObservables = selectedTodoIds.map{ id -> Observable<Int?> in
-            return self.fetchATodoWithObservable(id: id)
-                .map{ $0.data?.id}
-                .catchAndReturn(nil)
-        }
-        
-        return Observable.merge(apiCallObservables).compactMap{ $0 }
-        
-    }
-    
 }

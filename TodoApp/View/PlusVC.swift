@@ -62,10 +62,9 @@ extension PlusVC {
     
     //MARK: - 완료 버튼 셀렉터
     @objc func plusTodosButtonTapped() {
-        let title = plusTodos.text ?? ""
+        let title: String = plusTodos.text ?? ""
     
-        let isDoneValue = isDoneSwitch.isOn
-        
+        let isDoneValue: Bool = isDoneSwitch.isOn
 //        self.todosVM?.addATodo(title: title,
 //                               isDone: isDoneValue,
 //                               addedCompletion: {
@@ -92,9 +91,9 @@ extension PlusVC {
     
     //MARK: - 에러 얼럿
     @objc func showErrorAlert(errMsg: String) {
-        let alert = UIAlertController(title: "안내", message: errMsg, preferredStyle: .alert)
+        let alert: UIAlertController = UIAlertController(title: "안내", message: errMsg, preferredStyle: .alert)
         
-        let closeAction = UIAlertAction(title: "닫기", style: .cancel)
+        let closeAction: UIAlertAction = UIAlertAction(title: "닫기", style: .cancel)
         
         alert.addAction(closeAction)
         

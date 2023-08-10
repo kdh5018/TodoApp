@@ -72,11 +72,11 @@ extension EditVC {
     
     @objc func editTodosButtonTapped() {
         
-        guard let id = self.selectedTodo?.id else { return }
+        guard let id: Int = self.selectedTodo?.id else { return }
         
-        let editedTitle = editTextField.text ?? ""
+        let editedTitle: String = editTextField.text ?? ""
         
-        let isDoneValue = isDoneSwitch.isOn
+        let isDoneValue: Bool = isDoneSwitch.isOn
         
 //        self.todosVM?.editATodo(id, editedTitle, isDoneValue, editedCompletion: {
 //            DispatchQueue.main.async {
@@ -92,9 +92,9 @@ extension EditVC {
     
     //MARK: - 에러 얼럿
     @objc func showErrorAlert(errMsg: String) {
-        let alert = UIAlertController(title: "안내", message: errMsg, preferredStyle: .alert)
+        let alert: UIAlertController = UIAlertController(title: "안내", message: errMsg, preferredStyle: .alert)
         
-        let closeAction = UIAlertAction(title: "닫기", style: .cancel)
+        let closeAction: UIAlertAction = UIAlertAction(title: "닫기", style: .cancel)
         
         alert.addAction(closeAction)
         

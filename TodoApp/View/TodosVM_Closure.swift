@@ -9,9 +9,9 @@ import Foundation
 
 class TodosVM_Closure {
     
-    var isChecked = false
+    var isChecked: Bool = false
     
-    var todoTableViewCell = TodoTableViewCell()
+    var todoTableViewCell: TodoTableViewCell = TodoTableViewCell()
     
     // 가공된 최종 데이터
     var todos: [Todo] = [] {
@@ -181,8 +181,8 @@ class TodosVM_Closure {
     // 2.
     fileprivate func handleToggleTodo(existingTodo: Todo, checked: Bool) {
         
-        guard let id = existingTodo.id,
-              let title = existingTodo.title else { return }
+        guard let id: Int = existingTodo.id,
+              let title: String = existingTodo.title else { return }
         
         // Transform
         // 3.
@@ -290,7 +290,9 @@ class TodosVM_Closure {
                    let deletedTodoId: Int = deletedATodo.id {
                     
                     // 삭제된 아이템 찾아서 그 데이터만 현재 리스트에서 빼기
-                    self.todos = self.todos.filter{ $0.id ?? 0 != deletedTodoId }
+                    self.todos = self.todos.filter{ (todo: Todo) in
+                        return (todo.id ?? 0) != deletedTodoId
+                    }
                     self.output.notifyDeleted?()
         
                 }
@@ -409,7 +411,7 @@ class TodosVM_Closure {
     /// 더 가져오기
     fileprivate func fetchMore() {
         
-        guard let pageInfo = self.pageInfo,
+        guard let pageInfo: Meta = self.pageInfo,
                 pageInfo.hasNext(),
                 !isLoading else {
             return print("다음 페이지가 없습니다")
@@ -466,7 +468,7 @@ class TodosVM_Closure {
     
     fileprivate func handleError(_ error: Error) {
         
-        guard let apiError = error as? TodosAPI.ApiError else {
+        guard let apiError: TodosAPI.ApiError = error as? TodosAPI.ApiError else {
             print("모르는 에러입니다")
             return
         }

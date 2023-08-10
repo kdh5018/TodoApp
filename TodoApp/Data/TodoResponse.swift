@@ -19,13 +19,11 @@ struct BaseListResponse<T: Codable>: Codable {
     let data: [T]?
     let meta: Meta?
     let message: String?
-//    let hey: String
 }
 
 struct BaseResponse<T: Codable>: Codable {
     let data: T?
     let message: String?
-//    let hey: String
 }
 
 // MARK: - Todo

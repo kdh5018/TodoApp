@@ -20,19 +20,19 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "?page=\(page)"
+        let urlString: String = baseURL + "/todos" + "?page=\(page)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -55,17 +55,17 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let listResponse = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: jsonData)
-                    let todos = listResponse.data
+                    let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: jsonData)
+                    let todos: [Todo]? = listResponse.data
                     
                     print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
-                    guard let todos = todos,
+                    guard let todos: [Todo] = todos,
                           !todos.isEmpty else {
                         return completion(.failure(ApiError.noContentsError))
                     }
@@ -93,19 +93,19 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "/\(id)"
+        let urlString: String = baseURL + "/todos" + "/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -129,11 +129,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -163,7 +163,7 @@ extension TodosAPI {
         
         // URLComponents : URL 구성하는 구조로써 정의하면 보다 편하게 URL 설정을 할 수 있음
         // URL+Ext로 익스텐션(헬퍼 메소드)을 설정해서 보다 편하게 URL 설정
-        let requestUrl = URL(baseUrl: baseURL + "/todos/search", queryItems: ["query": searchTerm, "page": "\(page)"])
+        let requestUrl: URL? = URL(baseUrl: baseURL + "/todos/search", queryItems: ["query": searchTerm, "page": "\(page)"])
         
 //        var urlComponents = URLComponents(string: baseURL + "/todos/search")
 //        urlComponents?.queryItems = [
@@ -175,13 +175,13 @@ extension TodosAPI {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest:URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -208,13 +208,13 @@ extension TodosAPI {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let listResponse = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: jsonData)
-                    let todos = listResponse.data
+                    let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: jsonData)
+                    let todos: [Todo]? = listResponse.data
                     
                     print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
-                    guard let todos = todos,
+                    guard let todos: [Todo] = todos,
                           !todos.isEmpty else {
                         return completion(.failure(ApiError.noContentsError))
                     }
@@ -243,18 +243,18 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos"
+        let urlString: String = baseURL + "/todos"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         
-        let form = MultipartForm(parts: [
+        let form: MultipartForm = MultipartForm(parts: [
             MultipartForm.Part(name: "title", value: title),
             MultipartForm.Part(name: "is_done", value: "\(isDone)")
         ])
@@ -264,7 +264,7 @@ extension TodosAPI {
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -294,11 +294,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -324,9 +324,9 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos-json"
+        let urlString: String = baseURL + "/todos-json"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
@@ -335,15 +335,10 @@ extension TodosAPI {
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
-        
         let requestParams: [String : Any] = ["title" : title, "is_done" : "\(isDone)"]
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
+            let jsonData: Data = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
             
             urlRequest.httpBody = jsonData
         } catch {
@@ -353,7 +348,7 @@ extension TodosAPI {
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -377,11 +372,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -408,26 +403,21 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos-json/\(id)"
+        let urlString: String = baseURL + "/todos-json/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url:URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
-        
         let requestParams: [String : Any] = ["title" : title, "is_done" : "\(isDone)"]
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
+            let jsonData: Data = try JSONSerialization.data(withJSONObject: requestParams, options: [.prettyPrinted])
             
             urlRequest.httpBody = jsonData
         } catch {
@@ -437,7 +427,7 @@ extension TodosAPI {
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -461,11 +451,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -492,9 +482,9 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos/\(id)"
+        let urlString:String = baseURL + "/todos/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
@@ -502,11 +492,6 @@ extension TodosAPI {
         urlRequest.httpMethod = "PUT"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         urlRequest.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let form = MultipartForm(parts: [
-            MultipartForm.Part(name: "title", value: title),
-            MultipartForm.Part(name: "is_done", value: "\(isDone)")
-        ])
         
         let requestParams: [String : String] = ["title" : title, "is_done" : "\(isDone)"]
         
@@ -516,7 +501,7 @@ extension TodosAPI {
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -540,11 +525,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -569,19 +554,19 @@ extension TodosAPI {
         // 2. urlSession으로 API 호출
         // 3. API 호출에 대한 응답을 받는다
         
-        let urlString = baseURL + "/todos" + "/\(id)"
+        let urlString: String = baseURL + "/todos" + "/\(id)"
         
-        guard let url = URL(string: urlString) else {
+        guard let url: URL = URL(string: urlString) else {
             return completion(.failure(ApiError.notAllowedURL))
         }
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest: URLRequest = URLRequest(url: url)
         urlRequest.httpMethod = "DELETE"
         urlRequest.addValue("application/json", forHTTPHeaderField: "accept")
         
         URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
             
-            if let error = error {
+            if let error: Error = error {
                 return completion(.failure(ApiError.unknownError(error)))
             }
             
@@ -605,11 +590,11 @@ extension TodosAPI {
             }
 
             
-            if let jsonData = data {
+            if let jsonData: Data = data {
                 // convert data to our swift model
                 do {
                     // JSON -> struct로 디코딩 / 데이터 파싱
-                    let baseResponse = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
+                    let baseResponse: BaseResponse<Todo> = try JSONDecoder().decode(BaseResponse<Todo>.self, from: jsonData)
                     
                     completion(.success(baseResponse))
 
@@ -663,7 +648,7 @@ extension TodosAPI {
     static func deleteSelectedTodos(selectedTodoIds: [Int], completion: @escaping ([Int]) -> Void) {
         
         // 동시에 처리하기 위해 디스패치그룹을 사용
-        let group = DispatchGroup()
+        let group: DispatchGroup = DispatchGroup()
         
         // 성공적으로 삭제가 이뤄진 데이터
         var deletedTodoIds : [Int] = [Int]()
@@ -675,7 +660,7 @@ extension TodosAPI {
                 switch result {
                 case .success(let response):
                     // 삭제된 아이디를 삭제된 아이디 배열에 넣기
-                    if let todoId = response.data?.id {
+                    if let todoId: Int = response.data?.id {
                         deletedTodoIds.append(todoId)
                         print("inner deleteATodo - Success: \(todoId)")
                     }
@@ -699,7 +684,7 @@ extension TodosAPI {
     static func fetchedSelectedTodos(selectedTodoIds: [Int], completion: @escaping (Result<[Todo], ApiError>) -> Void) {
         
         // 동시에 처리하기 위해 디스패치그룹을 사용
-        let group = DispatchGroup()
+        let group: DispatchGroup = DispatchGroup()
         
         // 가져온 데이터
         var fetchedTodos: [Todo] = [Todo]()
@@ -717,7 +702,7 @@ extension TodosAPI {
                 switch result {
                 case .success(let response):
                     // 가져온 할 일을 가져온 할 일 배열에 넣는다
-                    if let todo = response.data {
+                    if let todo: Todo = response.data {
                         fetchedTodos.append(todo)
                         print("inner fetchATodo - Success: \(todo)")
                     }

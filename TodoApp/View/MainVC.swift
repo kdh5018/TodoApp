@@ -21,14 +21,14 @@ class MainVC: UIViewController {
     
     var todos: [Todo] = []
     
-    var disposeBag = DisposeBag()
+    var disposeBag: DisposeBag = DisposeBag()
     
     @IBOutlet weak var searchBar: UISearchBar!
     
     
     // 클로저 선언과 동시에 호출(클로저 뒤에 괄호가 선언 동시에 호출하는 법)
     lazy var bottomIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .medium)
+        let indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
         indicator.color = UIColor.systemBlue
         indicator.startAnimating()
         indicator.frame = CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 44)
@@ -37,7 +37,7 @@ class MainVC: UIViewController {
     
     lazy var refreshControl: UIRefreshControl = {
         
-        let refreshControl = UIRefreshControl()
+        let refreshControl: UIRefreshControl = UIRefreshControl()
         
         refreshControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         refreshControl.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
@@ -50,9 +50,9 @@ class MainVC: UIViewController {
     // 검색 결과를 찾지 못했다
     lazy var searchDataNotFoundView: UIView = {
         
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 300))
+        let view: UIView = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 300))
         
-        let label = UILabel()
+        let label: UILabel = UILabel()
         label.text = "검색 결과를 찾을 수 없습니다🗑️"
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
@@ -67,9 +67,9 @@ class MainVC: UIViewController {
     // 더 이상 가져올 데이터가 없음
     lazy var bottomNoMoreDataView: UIView = {
         
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 60))
+        let view: UIView = UIView(frame: CGRect(x: 0, y: 0, width: myTableView.bounds.width, height: 60))
         
-        let label = UILabel()
+        let label: UILabel = UILabel()
         label.text = "더 이상 가져올 데이터가 없습니다👻"
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
@@ -112,12 +112,12 @@ class MainVC: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        if let destinationVC = segue.destination as? PlusVC {
+        if let destinationVC: PlusVC = segue.destination as? PlusVC {
             destinationVC.todosVM_Rx = self.todosVM_Rx
             destinationVC.todoTableViewCell = self.todoTableViewCell
             
         }
-        if let destinationVC = segue.destination as? EditVC, let editedTodo = sender as? Todo {
+        if let destinationVC: EditVC = segue.destination as? EditVC, let editedTodo = sender as? Todo {
             destinationVC.todosVM_Rx = self.todosVM_Rx
             destinationVC.todoTableViewCell = self.todoTableViewCell
             destinationVC.selectedTodo = editedTodo
@@ -152,7 +152,7 @@ extension MainVC {
             .todos
             .withUnretained(self) // [weak self] 할 필요 없음
             .observe(on: MainScheduler.instance) // 메인 스케줄러(쓰레드)에서 진행
-            .subscribe(onNext: { mainVC,updatedTodos in
+            .subscribe(onNext: { mainVC, updatedTodos in
             mainVC.todos = updatedTodos
             mainVC.myTableView.reloadData()
         }).disposed(by: disposeBag)
@@ -354,7 +354,7 @@ extension MainVC {
             // 백그라운드 - 사용자 입력 userInteractive
             DispatchQueue.global(qos: .userInteractive).async {
                 DispatchQueue.main.async { [weak self] in
-                    guard let userInput = sender.text,
+                    guard let userInput: String = sender.text,
                           let self = self else { return }
                     
                     print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
@@ -398,7 +398,7 @@ extension MainVC: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let cellData = self.todos[indexPath.row]
+        let cellData: Todo = self.todos[indexPath.row]
 
 
 
@@ -425,9 +425,9 @@ extension MainVC: UITableViewDelegate {
     //MARK: - 테이블뷰셀 좌우 스와이프
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 왼쪽
-        let edit = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
+        let edit: UIContextualAction = UIContextualAction(style: .normal, title: "수정") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
 
-            let itemToEdited = self.todos[indexPath.row]
+            let itemToEdited: Todo = self.todos[indexPath.row]
             
             self.performSegue(withIdentifier: "EditVC", sender: itemToEdited)
             
@@ -441,16 +441,16 @@ extension MainVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // 오른쪽
-        let delete = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
+        let delete: UIContextualAction = UIContextualAction(style: .destructive, title: "삭제") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
             print("삭제 클릭 됨")
             
             // 삭제할 아이템을 찾기 위한 indexPath의 값들 찾기
-            let itemToDelete = self.todos[indexPath.row]
+            let itemToDelete: Todo = self.todos[indexPath.row]
             print("itemToDelete: \(itemToDelete)")
             
             
             // 찾은 값들 중 내가 필요한 id만 가져오기
-            let id = itemToDelete.id!
+            let id: Int = itemToDelete.id!
             
             self.todosVM_Rx.handleInputAction(action: .deleteATodo(id: id))
             
@@ -462,9 +462,9 @@ extension MainVC: UITableViewDelegate {
     
     //MARK: - 스크롤 바닥 감지
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let height = scrollView.frame.size.height
-        let contentYOffset = scrollView.contentOffset.y
-        let distanceFromBottom = scrollView.contentSize.height - contentYOffset
+        let height: CGFloat = scrollView.frame.size.height
+        let contentYOffset: CGFloat = scrollView.contentOffset.y
+        let distanceFromBottom: CGFloat = scrollView.contentSize.height - contentYOffset
 
         if distanceFromBottom  - 200 < height {
 //            self.todosVM.fetchMore()
@@ -479,15 +479,15 @@ extension MainVC {
     
     @objc func showDeleteAlert(_ id: Int) {
         
-        let alert = UIAlertController(title: "할일 삭제", message: "\(id) 할일을 삭제하겠습니까?", preferredStyle: .alert)
+        let alert: UIAlertController = UIAlertController(title: "할일 삭제", message: "\(id) 할일을 삭제하겠습니까?", preferredStyle: .alert)
         
-        let submitAction = UIAlertAction(title: "확인", style: .default, handler: { _ in
+        let submitAction: UIAlertAction = UIAlertAction(title: "확인", style: .default, handler: { _ in
 //            self.todosVM.deleteATodo(id: id)
 //            self.todosVM_Closure.handleInputAction(action: .deleteATodo(id: id))
             self.todosVM_Rx.handleInputAction(action: .deleteATodo(id: id))
         })
         
-        let closeAction = UIAlertAction(title: "닫기", style: .cancel)
+        let closeAction:UIAlertAction = UIAlertAction(title: "닫기", style: .cancel)
         
         alert.addAction(submitAction)
         alert.addAction(closeAction)

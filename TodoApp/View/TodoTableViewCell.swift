@@ -37,7 +37,7 @@ class TodoTableViewCell: UITableViewCell {
     }
     
     func isCheckedFunc() {
-        let image = UIImage(named: "checkbox_checked")
+        let image: UIImage? = UIImage(named: "checkbox_checked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.strikeThrough()
         print(#fileID, #function, #line, "- 추가됨")
@@ -45,7 +45,7 @@ class TodoTableViewCell: UITableViewCell {
     }
     
     func isUnCheckedFunc() {
-        let image = UIImage(named: "checkbox_unchecked")
+        let image: UIImage? = UIImage(named: "checkbox_unchecked")
         checkBoxButton?.setImage(image, for: .normal)
         todosDetail?.attributedText = todosDetail.text?.removeStrikeThrough()
         print(#fileID, #function, #line, "- 추가 해지됨")
@@ -54,9 +54,9 @@ class TodoTableViewCell: UITableViewCell {
     @objc func checkBoxToggled() {
         
         // 1. 셀 안에서 토글이 이루어짐
-        let toBeUpdatedIsDone = cellData?.isDone ?? false
+        let toBeUpdatedIsDone: Bool = cellData?.isDone ?? false
         
-        guard let cellData = cellData else { return }
+        guard let cellData: Todo = cellData else { return }
         
         checkButtonClicked?(cellData, !toBeUpdatedIsDone)
         
@@ -89,12 +89,12 @@ class TodoTableViewCell: UITableViewCell {
         self.cellData = cellData
         
         // 입력(최종 수정) 날짜
-        let dateFormatter = DateFormatter()
+        let dateFormatter: DateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         
-        if let date = dateFormatter.date(from: updated) {
+        if let date: Date = dateFormatter.date(from: updated) {
             dateFormatter.dateFormat = "yyyy-MM-dd"
-            let dateString = dateFormatter.string(from: date)
+            let dateString: String = dateFormatter.string(from: date)
             self.todosDate?.text = dateString
         } else {
             print("코딩이 잘못 됨")
@@ -108,12 +108,12 @@ class TodoTableViewCell: UITableViewCell {
         self.todosDetail?.text = title
         
         // 입력한 시간
-        let timeFormatter = DateFormatter()
+        let timeFormatter: DateFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         
-        if let time = timeFormatter.date(from: updated) {
+        if let time:Date = timeFormatter.date(from: updated) {
             timeFormatter.dateFormat = "HH:mm a"
-            let timeString = timeFormatter.string(from: time)
+            let timeString: String = timeFormatter.string(from: time)
             self.todosTime?.text = timeString
         } else {
             print("코딩이 잘못 됨")

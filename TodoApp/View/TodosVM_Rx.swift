@@ -15,11 +15,11 @@ class TodosVM_Rx {
     // 2. BehaviorRelay - .value
     // 3. PublishRelay
     
-    var isChecked = false
+    var isChecked: Bool = false
     
-    var todoTableViewCell = TodoTableViewCell()
+    var todoTableViewCell: TodoTableViewCell = TodoTableViewCell()
     
-    var disposeBag = DisposeBag()
+    var disposeBag: DisposeBag = DisposeBag()
     
     // 가공된 최종 데이터
     var todos: BehaviorRelay<[Todo]> = BehaviorRelay<[Todo]>(value: [])
@@ -208,8 +208,8 @@ class TodosVM_Rx {
     // 2.
     fileprivate func handleToggleTodo(existingTodo: Todo, checked: Bool) {
         
-        guard let id = existingTodo.id,
-              let title = existingTodo.title else { return }
+        guard let id: Int = existingTodo.id,
+              let title: String = existingTodo.title else { return }
         
         // Transform
         // 3.
@@ -238,7 +238,7 @@ class TodosVM_Rx {
         self.isLoading.accept(true)
         
         TodosAPI.editATodoWithObservable(id: id, title: editedTitle, isDone: isDone)
-            .do(onError: { failure in
+            .do(onError: { (failure: Error) in
                 self.isLoading.accept(false)
                 self.handleError(failure)
             },onCompleted: {
@@ -269,7 +269,7 @@ class TodosVM_Rx {
         self.isLoading.accept(true)
         
         TodosAPI.editATodoWithObservable(id: id, title: editedTitle, isDone: isDone)
-            .do(onError: { failure in
+            .do(onError: { (failure: Error) in
                 self.isLoading.accept(false)
                 self.handleError(failure)
             },onCompleted: {
@@ -283,7 +283,7 @@ class TodosVM_Rx {
                     // 지금 수정한 녀석의 아이디를 가지고 있는 인덱스 찾기
                     // 그 녀석을 바꾸기
                     
-                    var currentTodos = self.todos.value
+                    var currentTodos: [Todo] = self.todos.value
                     currentTodos[editedIndex] = editedATodo
                     
                     self.todos.accept(currentTodos)
@@ -307,7 +307,7 @@ class TodosVM_Rx {
         self.isLoading.accept(true)
         
         TodosAPI.deleteATodoWithObservable(id: id)
-            .do(onError: { failure in
+            .do(onError: { (failure: Error) in
                 self.isLoading.accept(false)
                 self.handleError(failure)
             },onCompleted: {
@@ -318,7 +318,9 @@ class TodosVM_Rx {
                    let deletedTodoId: Int = deletedATodo.id {
                     
                     // 삭제된 아이템 찾아서 그 데이터만 현재 리스트에서 빼기
-                    let filteredTodos = self.todos.value.filter{ $0.id ?? 0 != deletedTodoId }
+                    let filteredTodos: [Todo] = self.todos.value.filter { (todo: Todo) -> Bool in
+                        return (todo.id ?? 0) != deletedTodoId
+                    }
                     
                     self.todos.accept(filteredTodos)
                     
@@ -345,23 +347,20 @@ class TodosVM_Rx {
         
         
         TodosAPI.addATodoAndFetchTodosWithObservable(title: title, isDone: isDone)
-            .do(onError: { failure in
+            .do(onError: { (failure: Error) in
                 self.isLoading.accept(false)
                 self.handleError(failure)
             },onCompleted: {
                 self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
                 self.fetchRefresh()
-            })
-            .compactMap{ Optional(tuple: ($0.meta, $0.data))}
-            .subscribe(onNext: { pageInfo, fetchedTodos in
-//                if let fetchedTodos: [Todo] = response.data,
-//                   let pageInfo: Meta = response.meta {
+            }) // Observable<[Todo]>
+//                .map { (response: BaseListResponse<Todo>) -> (Meta?, [Todo]) in
+//                    return (response.meta, response.data)
+//                }
+                .subscribe(onNext: { (fetchedTodos: [Todo]) in
                     self.todos.accept(fetchedTodos)
-                    self.pageInfo = pageInfo
-//                    self.output.notifyTodoAdded?()
-                    self.output.notifyTodoAdded.onNext(())
-                    addedCompletion()
+//                    self.output.notifyTodoAdded.onNext(())
 //                    self.notifyTodosCompleted?(isDone)
 //                }
             }).disposed(by: disposeBag)
@@ -404,17 +403,19 @@ class TodosVM_Rx {
                 TodosAPI
                     .searchTodosWithObservable(searchTerm: searchTerm, page: page)
             }
-            .do(onError: { failure in
+            .do(onError: { (failure: Error) in
                 self.isLoading.accept(false)
                 self.handleError(failure)
             }, onCompleted: {
                 self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
             })
-            .compactMap{ Optional(tuple: ($0.meta, $0.data )) }
+            .compactMap { (response: BaseListResponse<Todo>) -> (meta: Meta?, data: [Todo])? in
+                return Optional(tuple: (response.meta, response.data))
+            }
             .subscribe(onNext: { pageInfo, fetchedTodos in
-                    if page == 1 {
-                        self.todos.accept(fetchedTodos)
+                if page == 1 {
+                    self.todos.accept(fetchedTodos)
                     } else {
                         let addedTodos = self.todos.value + fetchedTodos
                         
@@ -433,7 +434,7 @@ class TodosVM_Rx {
     /// 더 가져오기
     fileprivate func fetchMore() {
         
-        guard let pageInfo = self.pageInfo,
+        guard let pageInfo: Meta = self.pageInfo,
                 pageInfo.hasNext(),
               !isLoading.value else {
             return print("다음 페이지가 없습니다")
@@ -471,17 +472,19 @@ class TodosVM_Rx {
                 self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
             })
-            .compactMap{ Optional(tuple: ($0.meta, $0.data)) }
+            .compactMap { (response: BaseListResponse<Todo>) -> (meta: Meta?, data: [Todo])? in
+                return Optional(tuple: (response.meta, response.data))
+            }
             .subscribe(onNext: { pageInfo, fetchedTodos in
                 // 페이지 갱신
-                    if page == 1 {
-                        self.todos.accept(fetchedTodos)
-                    } else {
-                        let addedTodos = self.todos.value + fetchedTodos
-                        
-                        self.todos.accept(addedTodos)
-                    }
-                    self.pageInfo = pageInfo
+                if page == 1 {
+                    self.todos.accept(fetchedTodos)
+                } else {
+                    let addedTodos = self.todos.value + fetchedTodos
+                    
+                    self.todos.accept(addedTodos)
+                }
+                self.pageInfo = pageInfo
             }).disposed(by: disposeBag)
     }
     
