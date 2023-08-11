@@ -631,18 +631,18 @@ extension TodosAPI {
     ///   - title:
     ///   - isDone:
     ///   - completion:
-    static func addATodoAndFetchTodosWithObservable(title: String, isDone: Bool = false) -> Observable<[Todo]> {
+    static func addATodoAndFetchTodosWithObservable(title: String, isDone: Bool = false) -> Observable<BaseListResponse<Todo>> {
         
         // 1.
-        return self.addATodoWithObservable(title: title)
-            .flatMapLatest { _ in
+        return self.addATodoWithObservable(title: title, isDone: isDone)
+            .flatMapLatest { _ in // 가장 최근의 요청에 대한 응답 추가
                 self.fetchTodosWithObservable()
             } // BaseListResponse<Todo>
-            .compactMap { (response: BaseListResponse<Todo>) -> [Todo]? in
-                return response.data
-            } // [Todo]
+//            .compactMap { (response: BaseListResponse<Todo>) -> BaseListResponse<Todo>? in // [Todo]에 대한 데이터 옵셔널 언래핑
+//                return response.data
+//            } // [Todo]
             .catch({ err in
-                return Observable.just([])
+                return Observable.error(err)
             })
                 .share(replay: 1)
     }

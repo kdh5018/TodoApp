@@ -345,25 +345,27 @@ class TodosVM_Rx {
         
         self.isLoading.accept(true)
         
-        
+        // 1. 할일 추가 API + 완료된 할일 가져오기 -> Todo[]
         TodosAPI.addATodoAndFetchTodosWithObservable(title: title, isDone: isDone)
-            .do(onError: { (failure: Error) in
+            .do(onError: { (failure: Error) in // 1-1. [실패] : 에러처리하기, 로딩완료 처리
                 self.isLoading.accept(false)
                 self.handleError(failure)
-            },onCompleted: {
+            },onCompleted: { // 1-2. [성공] : 로딩완료 처리, 리프래시 완료 알려주기
                 self.isLoading.accept(false)
                 self.output.notifyRefreshEnded.onNext(())
                 self.fetchRefresh()
             }) // Observable<[Todo]>
-//                .map { (response: BaseListResponse<Todo>) -> (Meta?, [Todo]) in
-//                    return (response.meta, response.data)
-//                }
-                .subscribe(onNext: { (fetchedTodos: [Todo]) in
-                    self.todos.accept(fetchedTodos)
-//                    self.output.notifyTodoAdded.onNext(())
-//                    self.notifyTodosCompleted?(isDone)
-//                }
-            }).disposed(by: disposeBag)
+                .map { (response: BaseListResponse<Todo>) -> (Meta?, [Todo]?) in
+                    return (response.meta, response.data)
+                }
+                .subscribe(onNext: { (result: (meta: Meta?, todos: [Todo]?)) in
+                    guard let pageInfo = result.meta, let fetchedTodos = result.todos else {
+                        return
+                    }
+                    self.todos.accept(fetchedTodos) // 2. 기존 메모리에 있는 데이터 업데이트
+                    self.output.notifyTodoAdded.onNext(()) // 3. 아이템 추가되었다고 알리기
+                    self.pageInfo = pageInfo // 4. 페이지 정보 업데이트
+                }).disposed(by: disposeBag)
 
     }
     
