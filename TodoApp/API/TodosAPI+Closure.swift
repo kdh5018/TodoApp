@@ -62,7 +62,7 @@ extension TodosAPI {
                     let listResponse: BaseListResponse<Todo> = try JSONDecoder().decode(BaseListResponse<Todo>.self, from: jsonData)
                     let todos: [Todo]? = listResponse.data
                     
-                    print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
+//                    print(#fileID, #function, #line, "- todosResponse: \(listResponse)")
                     
                     // 상태코드는 200인데 파싱한 데이터에 따라서 에러처리
                     guard let todos: [Todo] = todos,

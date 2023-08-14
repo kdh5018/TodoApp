@@ -362,7 +362,8 @@ class TodosVM_Closure {
         }
         
         guard pageInfo?.hasNext() ?? true else {
-            return print("다음 페이지 없음")
+//            return print("다음 페이지 없음")
+            return
         }
         
         self.output.notifySearchDataNotFound?(false)
@@ -414,7 +415,8 @@ class TodosVM_Closure {
         guard let pageInfo: Meta = self.pageInfo,
                 pageInfo.hasNext(),
                 !isLoading else {
-            return print("다음 페이지가 없습니다")
+//            return print("다음 페이지가 없습니다")
+            return
         }
         
         if searchTerm.count > 0 { // 검색어가 있으면

@@ -26,7 +26,7 @@ class MainVC: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     
     
-    // 클로저 선언과 동시에 호출(클로저 뒤에 괄호가 선언 동시에 호출하는 법)
+    // lazy: 클로저 선언과 동시에 호출(클로저 뒤에 괄호가 선언 동시에 호출하는 법)
     lazy var bottomIndicator: UIActivityIndicatorView = {
         let indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
         indicator.color = UIColor.systemBlue
@@ -98,8 +98,21 @@ class MainVC: UIViewController {
         self.myTableView.tableFooterView = bottomIndicator
         self.myTableView.refreshControl = refreshControl
         
+        myTableView
+            .rx
+            .bottomReached
+            .withUnretained(self)
+            .bind(onNext: { mainVC, _ in
+                self.todosVM_Rx.handleInputAction(action: .fetchMore)
+            })
+            .disposed(by: disposeBag)
+        
         // 서치바 설정
-        self.searchBar.searchTextField.addTarget(self, action: #selector(searchTermChanged(_:)), for: .editingChanged)
+//        self.searchBar.searchTextField.addTarget(self, action: #selector(searchTermChanged(_:)), for: .editingChanged)
+        
+        searchBar.searchTextField.rx.text.orEmpty
+            .bind(onNext: self.todosVM_Rx.searchTerm.accept(_:))
+            .disposed(by: disposeBag)
         
         
         // 뷰모델 이벤트 받기 - 뷰 - 뷰모델 바인딩 - 묶기
@@ -159,13 +172,21 @@ extension MainVC {
         
         // 페이지 변경
         self.todosVM_Rx
-            .output
-            .notifyCurrentPageChanged
-            .withUnretained(self)
+            .currentPageInfo
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { mainVC, currentPage in
-                print("페이지: \(currentPage)")
-            }).disposed(by: disposeBag)
+            .subscribe(onNext: { text in
+                print("페이지: \(text)")
+            })
+            .disposed(by: disposeBag)
+        
+//        self.todosVM_Rx
+//            .output
+//            .notifyCurrentPageChanged
+//            .withUnretained(self)
+//            .observe(on: MainScheduler.instance)
+//            .subscribe(onNext: { mainVC, currentPage in
+//                print("페이지: \(currentPage)")
+//            }).disposed(by: disposeBag)
         
         // 로딩중 여부
         self.todosVM_Rx
@@ -173,11 +194,12 @@ extension MainVC {
             .withUnretained(self)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext:  { mainVC, isLoading in
-                if isLoading {
-                    self.myTableView.tableFooterView = self.bottomIndicator
-                } else {
-                    self.myTableView.tableFooterView = nil
-                }
+//                if isLoading {
+//                    self.myTableView.tableFooterView = self.bottomIndicator
+//                } else {
+//                    self.myTableView.tableFooterView = nil
+//                }
+                self.myTableView.tableFooterView = isLoading ? self.bottomIndicator : nil
             }).disposed(by: disposeBag)
         
         // 당겨서 새로고침 완료
@@ -202,13 +224,22 @@ extension MainVC {
         
         // 다음페이지 존재 여부
         self.todosVM_Rx
-            .output
             .notifyHasNextPage
-            .withUnretained(self)
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { mainVC, hasNext in
-                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
-            }).disposed(by: disposeBag)
+            .map{ !$0 ? self.bottomNoMoreDataView : nil } // Observable<UIView?>
+            .debug("⭐️ notifyHasNextPage")
+            .bind(to: self.myTableView.rx.tableFooterView)
+            .disposed(by: disposeBag)
+        
+//        self.todosVM_Rx
+//            .output
+//            .notifyHasNextPage
+//            .withUnretained(self)
+//            .observe(on: MainScheduler.instance)
+//            .debug("⭐️ notifyHasNextPage")
+//            .subscribe(onNext: { mainVC, hasNext in
+//                self.myTableView.tableFooterView = !hasNext ? self.bottomNoMoreDataView : nil
+//            }).disposed(by: disposeBag)
         
         // 할일 추가 완료 이벤트
         self.todosVM_Rx
@@ -345,34 +376,34 @@ extension MainVC {
     
     /// 검색어 입력
     /// - Parameter sender:
-    @objc fileprivate func searchTermChanged(_ sender: UITextField) {
-        
-        // 검색어가 입력되면 기존 작업 취소
-        searchTermInputWorkItem?.cancel()
-        
-        let dispatchWorkItem = DispatchWorkItem(block: {
-            // 백그라운드 - 사용자 입력 userInteractive
-            DispatchQueue.global(qos: .userInteractive).async {
-                DispatchQueue.main.async { [weak self] in
-                    guard let userInput: String = sender.text,
-                          let self = self else { return }
-                    
-                    print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
-//                    self.todosVM_Closure.todos = []
-                    self.todosVM_Rx.todos.accept([])
-                    // 뷰모델 검색어 갱신
-//                    self.todosVM.searchTerm = userInput
-//                    self.todosVM_Closure.handleInputAction(action: .searchTodos(searchTerm: userInput))
-                    self.todosVM_Rx.handleInputAction(action: .searchTodos(searchTerm: userInput))
-                }
-            }
-        })
-        
-        // 기존 작업을 나중에 취소하기 위해 메모리 주소 일치 시켜줌
-        self.searchTermInputWorkItem = dispatchWorkItem
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: dispatchWorkItem)
-    }
+//    @objc fileprivate func searchTermChanged(_ sender: UITextField) {
+//
+//        // 검색어가 입력되면 기존 작업 취소
+//        searchTermInputWorkItem?.cancel()
+//
+//        let dispatchWorkItem = DispatchWorkItem(block: {
+//            // 백그라운드 - 사용자 입력 userInteractive
+//            DispatchQueue.global(qos: .userInteractive).async {
+//                DispatchQueue.main.async { [weak self] in
+//                    guard let userInput: String = sender.text,
+//                          let self = self else { return }
+//
+//                    print(#fileID, #function, #line, "- 검색 API 호출하기: \(userInput)")
+////                    self.todosVM_Closure.todos = []
+//                    self.todosVM_Rx.todos.accept([])
+//                    // 뷰모델 검색어 갱신
+////                    self.todosVM.searchTerm = userInput
+////                    self.todosVM_Closure.handleInputAction(action: .searchTodos(searchTerm: userInput))
+//                    self.todosVM_Rx.handleInputAction(action: .searchTodos(searchTerm: userInput))
+//                }
+//            }
+//        })
+//
+//        // 기존 작업을 나중에 취소하기 위해 메모리 주소 일치 시켜줌
+//        self.searchTermInputWorkItem = dispatchWorkItem
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7 , execute: dispatchWorkItem)
+//    }
     
     
 }

@@ -19,6 +19,7 @@
 		76536E312A80A98E00716881 /* TodosVM_Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76536E302A80A98E00716881 /* TodosVM_Rx.swift */; };
 		76536E332A80D6E200716881 /* TodosAPI+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76536E322A80D6E200716881 /* TodosAPI+Rx.swift */; };
 		76633F9E2A55369B0076B7CD /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76633F9D2A55369B0076B7CD /* ErrorResponse.swift */; };
+		76667BE82A8A14FF00246913 /* UIScrollView+Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76667BE72A8A14FF00246913 /* UIScrollView+Reactive.swift */; };
 		76739F4C2A319CA90067E130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4B2A319CA90067E130 /* AppDelegate.swift */; };
 		76739F4E2A319CA90067E130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4D2A319CA90067E130 /* SceneDelegate.swift */; };
 		76739F502A319CA90067E130 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76739F4F2A319CA90067E130 /* MainVC.swift */; };
@@ -43,6 +44,7 @@
 		76536E302A80A98E00716881 /* TodosVM_Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosVM_Rx.swift; sourceTree = "<group>"; };
 		76536E322A80D6E200716881 /* TodosAPI+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodosAPI+Rx.swift"; sourceTree = "<group>"; };
 		76633F9D2A55369B0076B7CD /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
+		76667BE72A8A14FF00246913 /* UIScrollView+Reactive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Reactive.swift"; sourceTree = "<group>"; };
 		76739F482A319CA90067E130 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76739F4B2A319CA90067E130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		76739F4D2A319CA90067E130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				76739F712A36FB000067E130 /* ReuseIdentifiable.swift */,
 				76739F732A36FB210067E130 /* Nibbed.swift */,
 				767ADD442A83674F008D4C5C /* Optional+Ext.swift */,
+				76667BE72A8A14FF00246913 /* UIScrollView+Reactive.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				76739F722A36FB000067E130 /* ReuseIdentifiable.swift in Sources */,
 				761E95FC2A440E67003D677E /* EditVC.swift in Sources */,
 				76739F742A36FB210067E130 /* Nibbed.swift in Sources */,
+				76667BE82A8A14FF00246913 /* UIScrollView+Reactive.swift in Sources */,
 				761E95EF2A41671E003D677E /* TodosVM_Closure.swift in Sources */,
 				761E95F52A417FFA003D677E /* URL+Ext.swift in Sources */,
 				76739F682A36DD360067E130 /* TodosAPI+Closure.swift in Sources */,

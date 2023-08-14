@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxRelay
+import RxCocoa
 
 class TodosVM_Rx {
     
@@ -32,7 +33,7 @@ class TodosVM_Rx {
         
         var notifySearchDataNotFound: PublishSubject<Bool> = PublishSubject<Bool>()
         
-        var notifyHasNextPage: PublishSubject<Bool> = PublishSubject<Bool>()
+//        var notifyHasNextPage: PublishSubject<Bool> = PublishSubject<Bool>()
         
         var notifyTodoAdded: PublishSubject<Void> = PublishSubject<Void>()
         
@@ -44,7 +45,7 @@ class TodosVM_Rx {
         
         var notifyDeleted: PublishSubject<Void> = PublishSubject<Void>()
         
-        var notifyCurrentPageChanged: PublishSubject<Int> = PublishSubject<Int>()
+//        var notifyCurrentPageChanged: PublishSubject<Int> = PublishSubject<Int>()
         
     }
 
@@ -52,46 +53,34 @@ class TodosVM_Rx {
 
     
     // 검색어
-    var searchTerm: String = "" {
-        didSet {
-            if searchTerm.count > 0 {
-                self.searchTodos(searchTerm: searchTerm)
-            } else {
-                self.fetchTodos()
-            }
-        }
-    }
+//    var searchTerm: String = "" {
+//        didSet {
+//            if searchTerm.count > 0 {
+//                self.searchTodos(searchTerm: searchTerm)
+//            } else {
+//                self.fetchTodos()
+//            }
+//        }
+//    }
     
-    var pageInfo: Meta? = nil {
-        didSet {
-            // 다음페이지 있는지 여부 이벤트 보내기
-//            self.output.notifyHasNextPage?(pageInfo?.hasNext() ?? true)
-            let hasNextPage = pageInfo?.hasNext() ?? true
-            self.output.notifyHasNextPage.onNext(hasNextPage)
-            // 현재페이지 변경시 데이터 보내기
-//            self.output.notifyCurrentPageChanged?(currentPage)
-            self.output.notifyCurrentPageChanged.onNext(currentPage)
-        }
-    }
+    var searchTerm: BehaviorRelay<String> = BehaviorRelay<String>(value: "")
     
-    var currentPage: Int {
-        get {
-            if let pageInfo = self.pageInfo,
-               let currentPage = pageInfo.currentPage {
-                return currentPage
-            } else {
-                return 1
-            }
-        }
-    }
+    var pageInfo: BehaviorRelay<Meta?> = BehaviorRelay<Meta?>(value: nil)
     
-    var isCompleting: Bool = false {
-        didSet {
-//            self.output.notifyTodosCompleted?(isCompleting)
-            self.output.notifyTodosCompleted.onNext(isCompleting)
-//            self.notifyTodosCompleted?(isCompleting)
-        }
-    }
+    // 다음페이지 있는지 이벤트
+    var notifyHasNextPage: Observable<Bool>
+    
+    var currentPage: BehaviorRelay<Int> = BehaviorRelay<Int>(value: 1)
+    
+    var currentPageInfo: Observable<String>
+    
+//    var isCompleting: Bool = false {
+//        didSet {
+////            self.output.notifyTodosCompleted?(isCompleting)
+//            self.output.notifyTodosCompleted.onNext(isCompleting)
+////            self.notifyTodosCompleted?(isCompleting)
+//        }
+//    }
     
 //    // 할일 완료 여부
 //    var notifyTodosCompleted: ((_ isCompleted: Bool) -> Void)? = nil
@@ -165,7 +154,40 @@ class TodosVM_Rx {
 //    }
     
     init() {
-        fetchTodos()
+        currentPageInfo = self.currentPage.map{ "⭐️페이지: \($0)" }
+        
+        pageInfo
+            .compactMap{ $0 } // Meta
+            .map{ if let currentPage = $0.currentPage {
+                    return currentPage
+                } else {
+                    return 1
+                }
+            }
+            .bind(onNext: self.currentPage.accept(_:))
+            .disposed(by: disposeBag)
+        
+        self.notifyHasNextPage = pageInfo.skip(1).map{ $0?.hasNext() ?? true } // Observable<Bool>
+        
+        searchTerm
+            .withUnretained(self)
+            .do(onNext: { _ in
+                self.todos.accept([])
+            })
+            .debounce(RxTimeInterval.milliseconds(700), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { vm, searchTerm in
+                if searchTerm.count > 0 {
+                    self.pageInfo.accept(nil)
+                    self.currentPage.accept(1)
+                    vm.searchTodos(searchTerm: searchTerm)
+                } else {
+                    vm.fetchTodos()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+//        fetchTodos()
+        
     }// init
     
     
@@ -359,12 +381,11 @@ class TodosVM_Rx {
                     return (response.meta, response.data)
                 }
                 .subscribe(onNext: { (result: (meta: Meta?, todos: [Todo]?)) in
-                    guard let pageInfo = result.meta, let fetchedTodos = result.todos else {
-                        return
-                    }
+                    guard let pageInfo = result.meta,
+                          let fetchedTodos = result.todos else { return }
                     self.todos.accept(fetchedTodos) // 2. 기존 메모리에 있는 데이터 업데이트
                     self.output.notifyTodoAdded.onNext(()) // 3. 아이템 추가되었다고 알리기
-                    self.pageInfo = pageInfo // 4. 페이지 정보 업데이트
+                    self.pageInfo.accept(pageInfo) // 4. 페이지 정보 업데이트
                 }).disposed(by: disposeBag)
 
     }
@@ -378,7 +399,7 @@ class TodosVM_Rx {
         
         if searchTerm.count < 1 {
             print("검색어가 없음")
-            return
+            return fetchRefresh()
         }
         
         if isLoading.value {
@@ -386,8 +407,9 @@ class TodosVM_Rx {
             return
         }
         
-        guard pageInfo?.hasNext() ?? true else {
-            return print("다음 페이지 없음")
+        guard pageInfo.value?.hasNext() ?? true else {
+//            return print("다음 페이지 없음")
+            return
         }
         
 //        self.output.notifySearchDataNotFound?(false)
@@ -423,7 +445,7 @@ class TodosVM_Rx {
                         
                         self.todos.accept(addedTodos)
                     }
-                    self.pageInfo = pageInfo
+                self.pageInfo.accept(pageInfo)
             }).disposed(by: disposeBag)
 
     }
@@ -436,22 +458,24 @@ class TodosVM_Rx {
     /// 더 가져오기
     fileprivate func fetchMore() {
         
-        guard let pageInfo: Meta = self.pageInfo,
+        guard let pageInfo: Meta = self.pageInfo.value,
                 pageInfo.hasNext(),
               !isLoading.value else {
-            return print("다음 페이지가 없습니다")
+//            return print("다음 페이지가 없습니다")
+            return
         }
         
-        if searchTerm.count > 0 { // 검색어가 있으면
-            self.searchTodos(searchTerm: searchTerm, page: self.currentPage + 1)
+        if searchTerm.value.count > 0 { // 검색어가 있으면
+            self.searchTodos(searchTerm: searchTerm.value, page: self.currentPage.value + 1)
         } else {
-            self.fetchTodos(page: currentPage + 1)
+            self.fetchTodos(page: currentPage.value + 1)
         }
     }
     
     /// 할 일 가져오기
     /// - Parameter page: 페이지
     func fetchTodos(page: Int = 1, isDone: Bool = false) {
+        print(#fileID, #function, #line, "- comment")
         
         if isLoading.value {
             print("로딩중입니다")
@@ -468,7 +492,7 @@ class TodosVM_Rx {
                     .fetchTodosWithObservable(page: page)
             }
             .do(onError: { error in
-                self.pageInfo = nil
+                self.pageInfo.accept(nil)
                 self.handleError(error)
             }, onCompleted: {
                 self.isLoading.accept(false)
@@ -486,7 +510,7 @@ class TodosVM_Rx {
                     
                     self.todos.accept(addedTodos)
                 }
-                self.pageInfo = pageInfo
+                self.pageInfo.accept(pageInfo)
             }).disposed(by: disposeBag)
     }
     
